@@ -58,7 +58,6 @@
 #include "win/thread.c"
 #include "win/timer.c"
 #include "win/tty.c"
-#include "win/udp.c"
 #include "win/util.c"
 #include "win/winapi.c"
 #include "win/winsock.c"
