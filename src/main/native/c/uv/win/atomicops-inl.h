@@ -22,7 +22,7 @@
 #ifndef UV_WIN_ATOMICOPS_INL_H_
 #define UV_WIN_ATOMICOPS_INL_H_
 
-#include "uv.h"
+#include "uv/uv.h"
 #include "internal.h"
 
 

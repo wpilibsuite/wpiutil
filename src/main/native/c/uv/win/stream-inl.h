@@ -24,7 +24,7 @@
 
 #include <assert.h>
 
-#include "uv.h"
+#include "uv/uv.h"
 #include "internal.h"
 #include "handle-inl.h"
 #include "req-inl.h"
