@@ -24,7 +24,7 @@
 # include <stdint.h>
 #endif
 
-#include "uv.h"
+#include "uv/uv.h"
 #include "uv-common.h"
 
 #define UV__INET_ADDRSTRLEN         16

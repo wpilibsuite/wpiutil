@@ -1,4 +1,4 @@
-#include "uv.h"
+#include "uv/uv.h"
 #include "internal.h"
 #include "winapi.h"
 

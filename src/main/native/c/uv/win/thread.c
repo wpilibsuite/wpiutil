@@ -23,7 +23,7 @@
 #include <limits.h>
 #include <stdlib.h>
 
-#include "uv.h"
+#include "uv/uv.h"
 #include "internal.h"
 
 

@@ -29,7 +29,7 @@
 #include <crtdbg.h>
 #endif
 
-#include "uv.h"
+#include "uv/uv.h"
 #include "internal.h"
 #include "queue.h"
 #include "handle-inl.h"

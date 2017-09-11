@@ -22,7 +22,7 @@
  * user-facing uv_async_t functions.
  */
 
-#include "uv.h"
+#include "uv/uv.h"
 #include "internal.h"
 #include "atomic-ops.h"
 

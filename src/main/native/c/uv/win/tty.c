@@ -34,7 +34,7 @@
 # define COMMON_LVB_REVERSE_VIDEO 0x4000
 #endif
 
-#include "uv.h"
+#include "uv/uv.h"
 #include "internal.h"
 #include "handle-inl.h"
 #include "stream-inl.h"

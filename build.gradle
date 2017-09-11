@@ -82,7 +82,7 @@ model {
                         include 'uv/*.c'
                     }
                     exportedHeaders {
-                        srcDirs 'src/main/native/include', 'src/main/native/include/uv', 'src/main/native/c/uv'
+                        srcDirs 'src/main/native/include'
                     }
                 }
             }

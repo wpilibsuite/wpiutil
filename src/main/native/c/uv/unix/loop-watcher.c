@@ -19,7 +19,7 @@
  * IN THE SOFTWARE.
  */
 
-#include "uv.h"
+#include "uv/uv.h"
 #include "internal.h"
 
 #define UV_LOOP_WATCHER_DEFINE(name, type)                                    \

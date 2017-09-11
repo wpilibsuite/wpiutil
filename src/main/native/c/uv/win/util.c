@@ -27,7 +27,7 @@
 #include <time.h>
 #include <wchar.h>
 
-#include "uv.h"
+#include "uv/uv.h"
 #include "internal.h"
 
 #include <winsock2.h>

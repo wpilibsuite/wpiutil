@@ -19,7 +19,7 @@
  * IN THE SOFTWARE.
  */
 
-#include "uv.h"
+#include "uv/uv.h"
 #include "internal.h"
 
 static int uv__dlerror(uv_lib_t* lib, const char* filename, DWORD errorno);

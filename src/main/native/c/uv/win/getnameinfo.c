@@ -22,7 +22,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-#include "uv.h"
+#include "uv/uv.h"
 #include "internal.h"
 #include "req-inl.h"
 

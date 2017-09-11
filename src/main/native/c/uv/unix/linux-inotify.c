@@ -18,8 +18,8 @@
  * IN THE SOFTWARE.
  */
 
-#include "uv.h"
-#include "tree.h"
+#include "uv/uv.h"
+#include "uv/tree.h"
 #include "internal.h"
 
 #include <stdint.h>

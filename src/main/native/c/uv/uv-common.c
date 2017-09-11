@@ -19,7 +19,7 @@
  * IN THE SOFTWARE.
  */
 
-#include "uv.h"
+#include "uv/uv.h"
 #include "uv-common.h"
 
 #include <assert.h>
