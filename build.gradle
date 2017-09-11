@@ -104,6 +104,31 @@ model {
                     }
                 }
             }
+            uvTest(NativeExecutableSpec) {
+                sources {
+                    c {
+                        source {
+                            srcDirs 'src/uvtest/native/c'
+                            include '**/*.c'
+                            lib library: "wpiutil"
+                        }
+                    }
+                }
+            }
+            uvBench(NativeExecutableSpec) {
+                sources {
+                    c {
+                        source {
+                            srcDirs 'src/uvbench/native/c', 'src/uvtest/native/c'
+                            include 'benchmark-*.c', 'run-benchmarks.c', 'runner.c', 'runner-platform.c', 'echo-server.c', 'blackhole-server.c'
+                            lib library: "wpiutil"
+                        }
+                        exportedHeaders {
+                            srcDirs 'src/uvtest/native/c'
+                        }
+                    }
+                }
+            }
         }
         // The TestingBase library is a workaround for an issue with the GoogleTest plugin.
         // The plugin by default will rebuild the entire test source set, which increases
