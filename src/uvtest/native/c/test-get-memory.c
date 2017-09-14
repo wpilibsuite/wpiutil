@@ -19,7 +19,7 @@
  * IN THE SOFTWARE.
  */
 
-#include "uv/uv.h"
+#include "uv.h"
 #include "task.h"
 
 TEST_IMPL(get_memory) {

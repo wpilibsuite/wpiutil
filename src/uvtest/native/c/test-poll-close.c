@@ -27,7 +27,7 @@
 # include <unistd.h>
 #endif
 
-#include "uv/uv.h"
+#include "uv.h"
 #include "task.h"
 
 #define NUM_SOCKETS 64

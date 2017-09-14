@@ -20,7 +20,7 @@
  */
 
 #include "task.h"
-#include "uv/uv.h"
+#include "uv.h"
 
 /* Update this is you're going to run > 1000 concurrent requests. */
 #define MAX_CONNS 1000

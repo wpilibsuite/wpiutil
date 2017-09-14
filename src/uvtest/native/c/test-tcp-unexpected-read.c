@@ -19,7 +19,7 @@
  * IN THE SOFTWARE.
  */
 
-#include "uv/uv.h"
+#include "uv.h"
 #include "task.h"
 
 static uv_check_t check_handle;

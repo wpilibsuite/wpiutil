@@ -20,7 +20,7 @@
  */
 
 #include "task.h"
-#include "uv/uv.h"
+#include "uv.h"
 
 #define NUM_TIMERS (10 * 1000 * 1000)
 

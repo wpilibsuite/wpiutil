@@ -23,7 +23,7 @@
 /* This test does not pretend to be cross-platform. */
 #ifndef _WIN32
 
-#include "uv/uv.h"
+#include "uv.h"
 #include "task.h"
 
 #include <errno.h>

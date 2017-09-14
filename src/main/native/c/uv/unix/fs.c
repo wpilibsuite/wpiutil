@@ -26,7 +26,7 @@
  * getting the errno to the right place (req->result or as the return value.)
  */
 
-#include "uv/uv.h"
+#include "uv.h"
 #include "internal.h"
 
 #include <errno.h>

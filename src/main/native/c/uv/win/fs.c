@@ -30,7 +30,7 @@
 #include <sys/utime.h>
 #include <stdio.h>
 
-#include "uv/uv.h"
+#include "uv.h"
 #include "internal.h"
 #include "req-inl.h"
 #include "handle-inl.h"

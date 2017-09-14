@@ -24,7 +24,7 @@
  * leave a ghost request in the system)
  */
 
-#include "uv/uv.h"
+#include "uv.h"
 #include "task.h"
 
 static uv_shutdown_t req1;

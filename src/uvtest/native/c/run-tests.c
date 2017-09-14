@@ -29,7 +29,7 @@
 # include <unistd.h>
 #endif
 
-#include "uv/uv.h"
+#include "uv.h"
 #include "runner.h"
 #include "task.h"
 

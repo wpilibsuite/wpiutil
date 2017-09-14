@@ -22,7 +22,7 @@
 #include <errno.h>
 #include <stdio.h>
 
-#include "uv/uv.h"
+#include "uv.h"
 #include "task.h"
 
 #ifdef _MSC_VER  /* msvc */

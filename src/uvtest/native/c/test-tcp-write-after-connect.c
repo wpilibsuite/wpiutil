@@ -21,7 +21,7 @@
 
 #ifndef _WIN32
 
-#include "uv/uv.h"
+#include "uv.h"
 #include "task.h"
 
 uv_loop_t loop;

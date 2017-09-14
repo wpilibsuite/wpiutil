@@ -19,7 +19,7 @@
  * IN THE SOFTWARE.
  */
 
-#include "uv/uv.h"
+#include "uv.h"
 #include "task.h"
 
 static uv_prepare_t prepare_handle;

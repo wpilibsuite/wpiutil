@@ -21,7 +21,7 @@
 
 #include <assert.h>
 
-#include "uv/uv.h"
+#include "uv.h"
 #include "internal.h"
 #include "atomicops-inl.h"
 #include "handle-inl.h"

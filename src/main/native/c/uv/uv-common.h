@@ -37,7 +37,7 @@
 # include <stdint.h>
 #endif
 
-#include "uv/uv.h"
+#include "uv.h"
 #include "uv/tree.h"
 #include "queue.h"
 

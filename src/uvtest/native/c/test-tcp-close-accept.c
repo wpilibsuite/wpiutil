@@ -22,7 +22,7 @@
 /* this test is Unix only */
 #ifndef _WIN32
 
-#include "uv/uv.h"
+#include "uv.h"
 #include "task.h"
 
 #include <stdio.h>

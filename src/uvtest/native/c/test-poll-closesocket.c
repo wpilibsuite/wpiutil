@@ -22,7 +22,7 @@
 
 #include <errno.h>
 
-#include "uv/uv.h"
+#include "uv.h"
 #include "task.h"
 
 uv_os_sock_t sock;

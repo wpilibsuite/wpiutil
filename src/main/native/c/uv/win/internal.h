@@ -22,7 +22,7 @@
 #ifndef UV_WIN_INTERNAL_H_
 #define UV_WIN_INTERNAL_H_
 
-#include "uv/uv.h"
+#include "uv.h"
 #include "../uv-common.h"
 
 #include "uv/tree.h"

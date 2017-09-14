@@ -19,7 +19,7 @@
  * IN THE SOFTWARE.
  */
 
-#include "uv/uv.h"
+#include "uv.h"
 
 #define UV_STRINGIFY(v) UV_STRINGIFY_HELPER(v)
 #define UV_STRINGIFY_HELPER(v) #v

@@ -27,7 +27,7 @@
 #include <sys/socket.h>
 #include <string.h>
 
-#include "uv/uv.h"
+#include "uv.h"
 #include "task.h"
 
 static int timer_cb_called;

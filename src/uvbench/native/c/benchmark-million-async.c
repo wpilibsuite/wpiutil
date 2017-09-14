@@ -20,7 +20,7 @@
  */
 
 #include "task.h"
-#include "uv/uv.h"
+#include "uv.h"
 
 struct async_container {
   unsigned async_events;

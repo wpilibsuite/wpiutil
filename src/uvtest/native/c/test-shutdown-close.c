@@ -24,7 +24,7 @@
  * it is immediately followed by an uv_close call.
  */
 
-#include "uv/uv.h"
+#include "uv.h"
 #include "task.h"
 
 

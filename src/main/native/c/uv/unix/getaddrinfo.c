@@ -25,7 +25,7 @@
 # define _GNU_SOURCE
 #endif
 
-#include "uv/uv.h"
+#include "uv.h"
 #include "internal.h"
 
 #include <errno.h>

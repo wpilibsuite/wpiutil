@@ -22,7 +22,7 @@
 #ifndef TASK_H_
 #define TASK_H_
 
-#include "uv/uv.h"
+#include "uv.h"
 
 #include <stdio.h>
 #include <stddef.h>

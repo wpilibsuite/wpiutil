@@ -24,7 +24,7 @@
 
 #include "runner.h"
 #include "task.h"
-#include "uv/uv.h"
+#include "uv.h"
 
 char executable_path[sizeof(executable_path)];
 

@@ -23,7 +23,7 @@
  * is what libuv uses elsewhere and it avoids a dependency on <sys/epoll.h>.
  */
 
-#include "uv/uv.h"
+#include "uv.h"
 #include "internal.h"
 
 #include <stdint.h>

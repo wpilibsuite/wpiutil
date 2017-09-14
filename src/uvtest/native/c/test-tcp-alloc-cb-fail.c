@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "uv/uv.h"
+#include "uv.h"
 #include "task.h"
 
 static uv_tcp_t server;

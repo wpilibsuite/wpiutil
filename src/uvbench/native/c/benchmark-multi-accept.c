@@ -20,7 +20,7 @@
  */
 
 #include "task.h"
-#include "uv/uv.h"
+#include "uv.h"
 
 #define IPC_PIPE_NAME TEST_PIPENAME
 #define NUM_CONNECTS  (250 * 1000)

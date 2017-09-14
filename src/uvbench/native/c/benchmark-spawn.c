@@ -22,7 +22,7 @@
 /* This benchmark spawns itself 1000 times. */
 
 #include "task.h"
-#include "uv/uv.h"
+#include "uv.h"
 
 static uv_loop_t* loop;
 

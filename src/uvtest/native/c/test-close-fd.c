@@ -21,7 +21,7 @@
 
 #if !defined(_WIN32)
 
-#include "uv/uv.h"
+#include "uv.h"
 #include "task.h"
 #include <fcntl.h>
 #include <unistd.h>

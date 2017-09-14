@@ -19,7 +19,7 @@
  * IN THE SOFTWARE.
  */
 
-#include "uv/uv.h"
+#include "uv.h"
 
 TEST_DECLARE   (platform_output)
 TEST_DECLARE   (callback_order)
