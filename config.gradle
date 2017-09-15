@@ -7,7 +7,7 @@ def windowsReleaseCompilerArgs = ['/O2']
 def windowsLinkerArgs = [ '/DEBUG:FULL' ]
 def windowsReleaseLinkerArgs = [ '/OPT:REF', '/OPT:ICF' ]
 
-def linuxCompilerArgs = ['-std=c++11', '-Wformat=2', '-Wall', '-Wextra', '-Werror', '-pedantic', '-Wno-psabi', '-g',
+def linuxCompilerArgs = ['-std=c++14', '-Wformat=2', '-Wall', '-Wextra', '-Werror', '-pedantic', '-Wno-psabi', '-g',
                          '-D_LARGEFILE_SOURCE', '-D_FILE_OFFSET_BITS=64', '-D_GNU_SOURCE',
                          '-Wno-unused-parameter', '-fPIC', '-rdynamic', '-Wno-error=deprecated-declarations', '-pthread']
 def linuxLinkerArgs = ['-rdynamic', '-pthread', '-ldl']
@@ -15,7 +15,7 @@ def linuxReleaseCompilerArgs = ['-O2']
 def linuxDebugCompilerArgs = ['-O0']
 def linux32BitArg = '-m32'
 
-def macCompilerArgs =  ['-std=c++11', '-Wall', '-Wextra', '-Werror', '-pedantic-errors', '-fPIC', '-g',
+def macCompilerArgs =  ['-std=c++14', '-Wall', '-Wextra', '-Werror', '-pedantic-errors', '-fPIC', '-g',
                         '-D_DARWIN_USE_64_BIT_INODE=1', '-D_DARWIN_UNLIMITED_SELECT=1',
                             '-Wno-unused-parameter', '-Wno-missing-field-initializers', '-Wno-unused-private-field']
 def macReleaseCompilerArgs = ['-O2']
