@@ -9,6 +9,8 @@
 #include <memory>
 #include <string>
 #include <uv.h>
+#include "llvm/SmallString.h"
+#include "llvm/StringRef.h"
 #include "request.hpp"
 #include "handle.hpp"
 #include "util.hpp"
@@ -174,9 +176,10 @@ public:
      * @param opts Optional additional flags.
      */
     template<typename I = IPv4>
-    void bind(std::string ip, unsigned int port, Flags<Bind> opts = Flags<Bind>{}) {
+    void bind(llvm::StringRef ip, unsigned int port, Flags<Bind> opts = Flags<Bind>{}) {
+        llvm::SmallString<128> ip_copy = ip;
         typename details::IpTraits<I>::Type addr;
-        details::IpTraits<I>::addrFunc(ip.data(), port, &addr);
+        details::IpTraits<I>::addrFunc(ip_copy.c_str(), port, &addr);
         invoke(&uv_udp_bind, get(), reinterpret_cast<const sockaddr *>(&addr), opts);
     }
 
@@ -223,8 +226,10 @@ public:
      * @return True in case of success, false otherwise.
      */
     template<typename I = IPv4>
-    bool multicastMembership(std::string multicast, std::string iface, Membership membership) {
-        return (0 == uv_udp_set_membership(get(), multicast.data(), iface.data(), static_cast<uv_membership>(membership)));
+    bool multicastMembership(llvm::StringRef multicast, llvm::StringRef iface, Membership membership) {
+        llvm::SmallString<128> multicast_copy = multicast;
+        llvm::SmallString<128> iface_copy = iface;
+        return (0 == uv_udp_set_membership(get(), multicast_copy.c_str(), iface_copy.c_str(), static_cast<uv_membership>(membership)));
     }
 
     /**
@@ -254,8 +259,9 @@ public:
      * @return True in case of success, false otherwise.
      */
     template<typename I = IPv4>
-    bool multicastInterface(std::string iface) {
-        return (0 == uv_udp_set_multicast_interface(get(), iface.data()));
+    bool multicastInterface(llvm::StringRef iface) {
+        llvm::SmallString<128> iface_copy = iface;
+        return (0 == uv_udp_set_multicast_interface(get(), iface_copy.c_str()));
     }
 
     /**
@@ -295,9 +301,10 @@ public:
      * @param len The lenght of the submitted data.
      */
     template<typename I = IPv4>
-    void send(std::string ip, unsigned int port, std::unique_ptr<char[]> data, unsigned int len) {
+    void send(llvm::StringRef ip, unsigned int port, std::unique_ptr<char[]> data, unsigned int len) {
+        llvm::SmallString<128> ip_copy = ip;
         typename details::IpTraits<I>::Type addr;
-        details::IpTraits<I>::addrFunc(ip.data(), port, &addr);
+        details::IpTraits<I>::addrFunc(ip_copy.c_str(), port, &addr);
 
         auto req = loop().resource<details::SendReq>(
                     std::unique_ptr<char[], details::SendReq::Deleter>{
@@ -354,9 +361,10 @@ public:
      * @param len The lenght of the submitted data.
      */
     template<typename I = IPv4>
-    void send(std::string ip, unsigned int port, char *data, unsigned int len) {
+    void send(llvm::StringRef ip, unsigned int port, char *data, unsigned int len) {
+        llvm::SmallString<128> ip_copy = ip;
         typename details::IpTraits<I>::Type addr;
-        details::IpTraits<I>::addrFunc(ip.data(), port, &addr);
+        details::IpTraits<I>::addrFunc(ip_copy.c_str(), port, &addr);
 
         auto req = loop().resource<details::SendReq>(
                     std::unique_ptr<char[], details::SendReq::Deleter>{
@@ -407,9 +415,10 @@ public:
      * @return Number of bytes written.
      */
     template<typename I = IPv4>
-    int trySend(std::string ip, unsigned int port, std::unique_ptr<char[]> data, unsigned int len) {
+    int trySend(llvm::StringRef ip, unsigned int port, std::unique_ptr<char[]> data, unsigned int len) {
+        llvm::SmallString<128> ip_copy = ip;
         typename details::IpTraits<I>::Type addr;
-        details::IpTraits<I>::addrFunc(ip.data(), port, &addr);
+        details::IpTraits<I>::addrFunc(ip_copy.c_str(), port, &addr);
 
         uv_buf_t bufs[] = { uv_buf_init(data.get(), len) };
         auto bw = uv_udp_try_send(get(), bufs, 1, reinterpret_cast<const sockaddr *>(&addr));
@@ -451,9 +460,10 @@ public:
      * @return Number of bytes written.
      */
     template<typename I = IPv4>
-    int trySend(std::string ip, unsigned int port, char *data, unsigned int len) {
+    int trySend(llvm::StringRef ip, unsigned int port, char *data, unsigned int len) {
+        llvm::SmallString<128> ip_copy = ip;
         typename details::IpTraits<I>::Type addr;
-        details::IpTraits<I>::addrFunc(ip.data(), port, &addr);
+        details::IpTraits<I>::addrFunc(ip_copy.c_str(), port, &addr);
 
         uv_buf_t bufs[] = { uv_buf_init(data, len) };
         auto bw = uv_udp_try_send(get(), bufs, 1, reinterpret_cast<const sockaddr *>(&addr));

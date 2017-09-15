@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include <uv.h>
+#include "llvm/StringRef.h"
 #include "handle.hpp"
 #include "stream.hpp"
 #include "util.hpp"
@@ -187,7 +188,7 @@ public:
      * @param path The working directory to be used when `spawn()` is invoked.
      * @return A reference to this process handle.
      */
-    ProcessHandle & cwd(std::string path) noexcept {
+    ProcessHandle & cwd(llvm::StringRef path) noexcept {
         poCwd = path;
         return *this;
     }

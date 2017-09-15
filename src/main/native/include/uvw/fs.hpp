@@ -6,6 +6,8 @@
 #include <string>
 #include <chrono>
 #include <uv.h>
+#include "llvm/SmallString.h"
+#include "llvm/StringRef.h"
 #include "request.hpp"
 #include "util.hpp"
 #include "loop.hpp"
@@ -400,8 +402,9 @@ public:
      * @param flags Flags, as described in the official documentation.
      * @param mode Mode, as described in the official documentation.
      */
-    void open(std::string path, int flags, int mode) {
-        cleanupAndInvoke(&uv_fs_open, parent(), get(), path.data(), flags, mode, &fsOpenCallback);
+    void open(llvm::StringRef path, int flags, int mode) {
+        llvm::SmallString<128> path_copy = path;
+        cleanupAndInvoke(&uv_fs_open, parent(), get(), path_copy.c_str(), flags, mode, &fsOpenCallback);
     }
 
     /**
@@ -411,9 +414,10 @@ public:
      * @param mode Mode, as described in the official documentation.
      * @return True in case of success, false otherwise.
      */
-    bool openSync(std::string path, int flags, int mode) {
+    bool openSync(llvm::StringRef path, int flags, int mode) {
+        llvm::SmallString<128> path_copy = path;
         auto req = get();
-        cleanupAndInvokeSync(&uv_fs_open, parent(), req, path.data(), flags, mode);
+        cleanupAndInvokeSync(&uv_fs_open, parent(), req, path_copy.c_str(), flags, mode);
         if(req->result >= 0) { file = static_cast<uv_file>(req->result); }
         return !(req->result < 0);
     }
@@ -777,8 +781,9 @@ public:
      *
      * @param path Path, as described in the official documentation.
      */
-    void unlink(std::string path) {
-        cleanupAndInvoke(&uv_fs_unlink, parent(), get(), path.data(), &fsGenericCallback<Type::UNLINK>);
+    void unlink(llvm::StringRef path) {
+        llvm::SmallString<128> path_copy = path;
+        cleanupAndInvoke(&uv_fs_unlink, parent(), get(), path_copy.c_str(), &fsGenericCallback<Type::UNLINK>);
     }
 
     /**
@@ -786,9 +791,10 @@ public:
      * @param path Path, as described in the official documentation.
      * @return True in case of success, false otherwise.
      */
-    bool unlinkSync(std::string path) {
+    bool unlinkSync(llvm::StringRef path) {
+        llvm::SmallString<128> path_copy = path;
         auto req = get();
-        cleanupAndInvokeSync(&uv_fs_unlink, parent(), req, path.data());
+        cleanupAndInvokeSync(&uv_fs_unlink, parent(), req, path_copy.c_str());
         return !(req->result < 0);
     }
 
@@ -801,8 +807,9 @@ public:
      * @param path Path, as described in the official documentation.
      * @param mode Mode, as described in the official documentation.
      */
-    void mkdir(std::string path, int mode) {
-        cleanupAndInvoke(&uv_fs_mkdir, parent(), get(), path.data(), mode, &fsGenericCallback<Type::MKDIR>);
+    void mkdir(llvm::StringRef path, int mode) {
+        llvm::SmallString<128> path_copy = path;
+        cleanupAndInvoke(&uv_fs_mkdir, parent(), get(), path_copy.c_str(), mode, &fsGenericCallback<Type::MKDIR>);
     }
 
     /**
@@ -811,9 +818,10 @@ public:
      * @param mode Mode, as described in the official documentation.
      * @return True in case of success, false otherwise.
      */
-    bool mkdirSync(std::string path, int mode) {
+    bool mkdirSync(llvm::StringRef path, int mode) {
+        llvm::SmallString<128> path_copy = path;
         auto req = get();
-        cleanupAndInvokeSync(&uv_fs_mkdir, parent(), req, path.data(), mode);
+        cleanupAndInvokeSync(&uv_fs_mkdir, parent(), req, path_copy.c_str(), mode);
         return !(req->result < 0);
     }
 
@@ -825,8 +833,9 @@ public:
      *
      * @param tpl Template, as described in the official documentation.
      */
-    void mkdtemp(std::string tpl) {
-        cleanupAndInvoke(&uv_fs_mkdtemp, parent(), get(), tpl.data(), &fsGenericCallback<Type::MKDTEMP>);
+    void mkdtemp(llvm::StringRef tpl) {
+        llvm::SmallString<128> tpl_copy = tpl;
+        cleanupAndInvoke(&uv_fs_mkdtemp, parent(), get(), tpl_copy.c_str(), &fsGenericCallback<Type::MKDTEMP>);
     }
 
     /**
@@ -838,9 +847,10 @@ public:
      * * A boolean value that is true in case of success, false otherwise.
      * * The actual path of the newly created directoy.
      */
-    std::pair<bool, const char *> mkdtempSync(std::string tpl) {
+    std::pair<bool, const char *> mkdtempSync(llvm::StringRef tpl) {
+        llvm::SmallString<128> tpl_copy = tpl;
         auto req = get();
-        cleanupAndInvokeSync(&uv_fs_mkdtemp, parent(), req, tpl.data());
+        cleanupAndInvokeSync(&uv_fs_mkdtemp, parent(), req, tpl_copy.c_str());
         return std::make_pair(!(req->result < 0), req->path);
     }
 
@@ -852,8 +862,9 @@ public:
      *
      * @param path Path, as described in the official documentation.
      */
-    void rmdir(std::string path) {
-        cleanupAndInvoke(&uv_fs_rmdir, parent(), get(), path.data(), &fsGenericCallback<Type::RMDIR>);
+    void rmdir(llvm::StringRef path) {
+        llvm::SmallString<128> path_copy = path;
+        cleanupAndInvoke(&uv_fs_rmdir, parent(), get(), path_copy.c_str(), &fsGenericCallback<Type::RMDIR>);
     }
 
     /**
@@ -861,9 +872,10 @@ public:
      * @param path Path, as described in the official documentation.
      * @return True in case of success, false otherwise.
      */
-    bool rmdirSync(std::string path) {
+    bool rmdirSync(llvm::StringRef path) {
+        llvm::SmallString<128> path_copy = path;
         auto req = get();
-        cleanupAndInvokeSync(&uv_fs_rmdir, parent(), req, path.data());
+        cleanupAndInvokeSync(&uv_fs_rmdir, parent(), req, path_copy.c_str());
         return !(req->result < 0);
     }
 
@@ -876,8 +888,9 @@ public:
      * @param path Path, as described in the official documentation.
      * @param flags Flags, as described in the official documentation.
      */
-    void scandir(std::string path, int flags) {
-        cleanupAndInvoke(&uv_fs_scandir, parent(), get(), path.data(), flags, &fsResultCallback<Type::SCANDIR>);
+    void scandir(llvm::StringRef path, int flags) {
+        llvm::SmallString<128> path_copy = path;
+        cleanupAndInvoke(&uv_fs_scandir, parent(), get(), path_copy.c_str(), flags, &fsResultCallback<Type::SCANDIR>);
     }
 
     /**
@@ -890,9 +903,10 @@ public:
      * * A boolean value that is true in case of success, false otherwise.
      * * The number of directory entries selected.
      */
-    std::pair<bool, std::size_t> scandirSync(std::string path, int flags) {
+    std::pair<bool, std::size_t> scandirSync(llvm::StringRef path, int flags) {
+        llvm::SmallString<128> path_copy = path;
         auto req = get();
-        cleanupAndInvokeSync(&uv_fs_scandir, parent(), req, path.data(), flags);
+        cleanupAndInvokeSync(&uv_fs_scandir, parent(), req, path_copy.c_str(), flags);
         bool err = req->result < 0;
         return std::make_pair(!err, err ? 0 : std::size_t(req->result));
     }
@@ -948,8 +962,9 @@ public:
      *
      * @param path Path, as described in the official documentation.
      */
-    void stat(std::string path) {
-        cleanupAndInvoke(&uv_fs_stat, parent(), get(), path.data(), &fsStatCallback<Type::STAT>);
+    void stat(llvm::StringRef path) {
+        llvm::SmallString<128> path_copy = path;
+        cleanupAndInvoke(&uv_fs_stat, parent(), get(), path_copy.c_str(), &fsStatCallback<Type::STAT>);
     }
 
     /**
@@ -961,9 +976,10 @@ public:
      * * A boolean value that is true in case of success, false otherwise.
      * * An initialized instance of Stat.
      */
-    std::pair<bool, Stat> statSync(std::string path) {
+    std::pair<bool, Stat> statSync(llvm::StringRef path) {
+        llvm::SmallString<128> path_copy = path;
         auto req = get();
-        cleanupAndInvokeSync(&uv_fs_stat, parent(), req, path.data());
+        cleanupAndInvokeSync(&uv_fs_stat, parent(), req, path_copy.c_str());
         return std::make_pair(!(req->result < 0), req->statbuf);
     }
 
@@ -975,8 +991,9 @@ public:
      *
      * @param path Path, as described in the official documentation.
      */
-    void lstat(std::string path) {
-        cleanupAndInvoke(&uv_fs_lstat, parent(), get(), path.data(), &fsStatCallback<Type::LSTAT>);
+    void lstat(llvm::StringRef path) {
+        llvm::SmallString<128> path_copy = path;
+        cleanupAndInvoke(&uv_fs_lstat, parent(), get(), path_copy.c_str(), &fsStatCallback<Type::LSTAT>);
     }
 
     /**
@@ -988,9 +1005,10 @@ public:
      * * A boolean value that is true in case of success, false otherwise.
      * * An initialized instance of Stat.
      */
-    std::pair<bool, Stat> lstatSync(std::string path) {
+    std::pair<bool, Stat> lstatSync(llvm::StringRef path) {
+        llvm::SmallString<128> path_copy = path;
         auto req = get();
-        cleanupAndInvokeSync(&uv_fs_lstat, parent(), req, path.data());
+        cleanupAndInvokeSync(&uv_fs_lstat, parent(), req, path_copy.c_str());
         return std::make_pair(!(req->result < 0), req->statbuf);
     }
 
@@ -1003,8 +1021,10 @@ public:
      * @param old Old path, as described in the official documentation.
      * @param path New path, as described in the official documentation.
      */
-    void rename(std::string old, std::string path) {
-        cleanupAndInvoke(&uv_fs_rename, parent(), get(), old.data(), path.data(), &fsGenericCallback<Type::RENAME>);
+    void rename(llvm::StringRef old, llvm::StringRef path) {
+        llvm::SmallString<128> old_copy = old;
+        llvm::SmallString<128> path_copy = path;
+        cleanupAndInvoke(&uv_fs_rename, parent(), get(), old_copy.c_str(), path_copy.c_str(), &fsGenericCallback<Type::RENAME>);
     }
 
     /**
@@ -1013,9 +1033,11 @@ public:
      * @param path New path, as described in the official documentation.
      * @return True in case of success, false otherwise.
      */
-    bool renameSync(std::string old, std::string path) {
+    bool renameSync(llvm::StringRef old, llvm::StringRef path) {
+        llvm::SmallString<128> old_copy = old;
+        llvm::SmallString<128> path_copy = path;
         auto req = get();
-        cleanupAndInvokeSync(&uv_fs_rename, parent(), req, old.data(), path.data());
+        cleanupAndInvokeSync(&uv_fs_rename, parent(), req, old_copy.c_str(), path_copy.c_str());
         return !(req->result < 0);
     }
 
@@ -1041,8 +1063,10 @@ public:
      * @param path New path, as described in the official documentation.
      * @param flags Optional additional flags.
      */
-    void copyfile(std::string old, std::string path, Flags<CopyFile> flags = Flags<CopyFile>{}) {
-        cleanupAndInvoke(&uv_fs_copyfile, parent(), get(), old.data(), path.data(), flags, &fsGenericCallback<Type::COPYFILE>);
+    void copyfile(llvm::StringRef old, llvm::StringRef path, Flags<CopyFile> flags = Flags<CopyFile>{}) {
+        llvm::SmallString<128> old_copy = old;
+        llvm::SmallString<128> path_copy = path;
+        cleanupAndInvoke(&uv_fs_copyfile, parent(), get(), old_copy.c_str(), path_copy.c_str(), flags, &fsGenericCallback<Type::COPYFILE>);
     }
 
     /**
@@ -1064,9 +1088,11 @@ public:
      * @param flags Optional additional flags.
      * @return True in case of success, false otherwise.
      */
-    bool copyfileSync(std::string old, std::string path, Flags<CopyFile> flags = Flags<CopyFile>{}) {
+    bool copyfileSync(llvm::StringRef old, llvm::StringRef path, Flags<CopyFile> flags = Flags<CopyFile>{}) {
+        llvm::SmallString<128> old_copy = old;
+        llvm::SmallString<128> path_copy = path;
         auto req = get();
-        cleanupAndInvokeSync(&uv_fs_copyfile, parent(), get(), old.data(), path.data(), flags);
+        cleanupAndInvokeSync(&uv_fs_copyfile, parent(), get(), old_copy.c_str(), path_copy.c_str(), flags);
         return !(req->result < 0);
     }
 
@@ -1079,8 +1105,9 @@ public:
      * @param path Path, as described in the official documentation.
      * @param mode Mode, as described in the official documentation.
      */
-    void access(std::string path, int mode) {
-        cleanupAndInvoke(&uv_fs_access, parent(), get(), path.data(), mode, &fsGenericCallback<Type::ACCESS>);
+    void access(llvm::StringRef path, int mode) {
+        llvm::SmallString<128> path_copy = path;
+        cleanupAndInvoke(&uv_fs_access, parent(), get(), path_copy.c_str(), mode, &fsGenericCallback<Type::ACCESS>);
     }
 
     /**
@@ -1089,9 +1116,10 @@ public:
      * @param mode Mode, as described in the official documentation.
      * @return True in case of success, false otherwise.
      */
-    bool accessSync(std::string path, int mode) {
+    bool accessSync(llvm::StringRef path, int mode) {
+        llvm::SmallString<128> path_copy = path;
         auto req = get();
-        cleanupAndInvokeSync(&uv_fs_access, parent(), req, path.data(), mode);
+        cleanupAndInvokeSync(&uv_fs_access, parent(), req, path_copy.c_str(), mode);
         return !(req->result < 0);
     }
 
@@ -1104,8 +1132,9 @@ public:
      * @param path Path, as described in the official documentation.
      * @param mode Mode, as described in the official documentation.
      */
-    void chmod(std::string path, int mode) {
-        cleanupAndInvoke(&uv_fs_chmod, parent(), get(), path.data(), mode, &fsGenericCallback<Type::CHMOD>);
+    void chmod(llvm::StringRef path, int mode) {
+        llvm::SmallString<128> path_copy = path;
+        cleanupAndInvoke(&uv_fs_chmod, parent(), get(), path_copy.c_str(), mode, &fsGenericCallback<Type::CHMOD>);
     }
 
     /**
@@ -1114,9 +1143,10 @@ public:
      * @param mode Mode, as described in the official documentation.
      * @return True in case of success, false otherwise.
      */
-    bool chmodSync(std::string path, int mode) {
+    bool chmodSync(llvm::StringRef path, int mode) {
+        llvm::SmallString<128> path_copy = path;
         auto req = get();
-        cleanupAndInvokeSync(&uv_fs_chmod, parent(), req, path.data(), mode);
+        cleanupAndInvokeSync(&uv_fs_chmod, parent(), req, path_copy.c_str(), mode);
         return !(req->result < 0);
     }
 
@@ -1132,8 +1162,9 @@ public:
      * @param mtime `std::chrono::duration<double>`, having the same meaning as
      * described in the official documentation.
      */
-    void utime(std::string path, Time atime, Time mtime) {
-        cleanupAndInvoke(&uv_fs_utime, parent(), get(), path.data(), atime.count(), mtime.count(), &fsGenericCallback<Type::UTIME>);
+    void utime(llvm::StringRef path, Time atime, Time mtime) {
+        llvm::SmallString<128> path_copy = path;
+        cleanupAndInvoke(&uv_fs_utime, parent(), get(), path_copy.c_str(), atime.count(), mtime.count(), &fsGenericCallback<Type::UTIME>);
     }
 
     /**
@@ -1145,9 +1176,10 @@ public:
      * described in the official documentation.
      * @return True in case of success, false otherwise.
      */
-    bool utimeSync(std::string path, Time atime, Time mtime) {
+    bool utimeSync(llvm::StringRef path, Time atime, Time mtime) {
+        llvm::SmallString<128> path_copy = path;
         auto req = get();
-        cleanupAndInvokeSync(&uv_fs_utime, parent(), req, path.data(), atime.count(), mtime.count());
+        cleanupAndInvokeSync(&uv_fs_utime, parent(), req, path_copy.c_str(), atime.count(), mtime.count());
         return !(req->result < 0);
     }
 
@@ -1160,8 +1192,10 @@ public:
      * @param old Old path, as described in the official documentation.
      * @param path New path, as described in the official documentation.
      */
-    void link(std::string old, std::string path) {
-        cleanupAndInvoke(&uv_fs_link, parent(), get(), old.data(), path.data(), &fsGenericCallback<Type::LINK>);
+    void link(llvm::StringRef old, llvm::StringRef path) {
+        llvm::SmallString<128> old_copy = old;
+        llvm::SmallString<128> path_copy = path;
+        cleanupAndInvoke(&uv_fs_link, parent(), get(), old_copy.c_str(), path_copy.c_str(), &fsGenericCallback<Type::LINK>);
     }
 
     /**
@@ -1170,9 +1204,11 @@ public:
      * @param path New path, as described in the official documentation.
      * @return True in case of success, false otherwise.
      */
-    bool linkSync(std::string old, std::string path) {
+    bool linkSync(llvm::StringRef old, llvm::StringRef path) {
+        llvm::SmallString<128> old_copy = old;
+        llvm::SmallString<128> path_copy = path;
         auto req = get();
-        cleanupAndInvokeSync(&uv_fs_link, parent(), req, old.data(), path.data());
+        cleanupAndInvokeSync(&uv_fs_link, parent(), req, old_copy.c_str(), path_copy.c_str());
         return !(req->result < 0);
     }
 
@@ -1193,8 +1229,10 @@ public:
      * @param path New path, as described in the official documentation.
      * @param flags Optional additional flags.
      */
-    void symlink(std::string old, std::string path, Flags<SymLink> flags = Flags<SymLink>{}) {
-        cleanupAndInvoke(&uv_fs_symlink, parent(), get(), old.data(), path.data(), flags, &fsGenericCallback<Type::SYMLINK>);
+    void symlink(llvm::StringRef old, llvm::StringRef path, Flags<SymLink> flags = Flags<SymLink>{}) {
+        llvm::SmallString<128> old_copy = old;
+        llvm::SmallString<128> path_copy = path;
+        cleanupAndInvoke(&uv_fs_symlink, parent(), get(), old_copy.c_str(), path_copy.c_str(), flags, &fsGenericCallback<Type::SYMLINK>);
     }
 
     /**
@@ -1212,9 +1250,11 @@ public:
      * @param flags Flags, as described in the official documentation.
      * @return True in case of success, false otherwise.
      */
-    bool symlinkSync(std::string old, std::string path, Flags<SymLink> flags = Flags<SymLink>{}) {
+    bool symlinkSync(llvm::StringRef old, llvm::StringRef path, Flags<SymLink> flags = Flags<SymLink>{}) {
+        llvm::SmallString<128> old_copy = old;
+        llvm::SmallString<128> path_copy = path;
         auto req = get();
-        cleanupAndInvokeSync(&uv_fs_symlink, parent(), req, old.data(), path.data(), flags);
+        cleanupAndInvokeSync(&uv_fs_symlink, parent(), req, old_copy.c_str(), path_copy.c_str(), flags);
         return !(req->result < 0);
     }
 
@@ -1226,8 +1266,9 @@ public:
      *
      * @param path Path, as described in the official documentation.
      */
-    void readlink(std::string path) {
-        cleanupAndInvoke(&uv_fs_readlink, parent(), get(), path.data(), &fsReadlinkCallback);
+    void readlink(llvm::StringRef path) {
+        llvm::SmallString<128> path_copy = path;
+        cleanupAndInvoke(&uv_fs_readlink, parent(), get(), path_copy.c_str(), &fsReadlinkCallback);
     }
 
     /**
@@ -1237,16 +1278,15 @@ public:
      *
      * @return A `std::pair` composed as it follows:
      * * A boolean value that is true in case of success, false otherwise.
-     * * A `std::pair` composed as it follows:
-     *   * A bunch of data read from the given path.
-     *   * The amount of data read from the given path.
+     * * A StringRef composed of a bunch of data read from the given path.
      */
-    std::pair<bool, std::pair<const char *, std::size_t>>
-    readlinkSync(std::string path) {
+    std::pair<bool, llvm::StringRef>
+    readlinkSync(llvm::StringRef path) {
+        llvm::SmallString<128> path_copy = path;
         auto req = get();
-        cleanupAndInvokeSync(&uv_fs_readlink, parent(), req, path.data());
+        cleanupAndInvokeSync(&uv_fs_readlink, parent(), req, path_copy.c_str());
         bool err = req->result < 0;
-        return std::make_pair(!err, std::make_pair(static_cast<char *>(req->ptr), err ? 0 : std::size_t(req->result)));
+        return std::make_pair(!err, llvm::StringRef(static_cast<char *>(req->ptr), err ? 0 : std::size_t(req->result)));
     }
 
     /**
@@ -1257,8 +1297,9 @@ public:
      *
      * @param path Path, as described in the official documentation.
      */
-    void realpath(std::string path) {
-        cleanupAndInvoke(&uv_fs_realpath, parent(), get(), path.data(), &fsGenericCallback<Type::REALPATH>);
+    void realpath(llvm::StringRef path) {
+        llvm::SmallString<128> path_copy = path;
+        cleanupAndInvoke(&uv_fs_realpath, parent(), get(), path_copy.c_str(), &fsGenericCallback<Type::REALPATH>);
     }
 
     /**
@@ -1270,9 +1311,10 @@ public:
      * * A boolean value that is true in case of success, false otherwise.
      * * The canonicalized absolute pathname.
      */
-    std::pair<bool, const char *> realpathSync(std::string path) {
+    std::pair<bool, const char *> realpathSync(llvm::StringRef path) {
+        llvm::SmallString<128> path_copy = path;
         auto req = get();
-        cleanupAndInvokeSync(&uv_fs_realpath, parent(), req, path.data());
+        cleanupAndInvokeSync(&uv_fs_realpath, parent(), req, path_copy.c_str());
         return std::make_pair(!(req->result < 0), req->path);
     }
 
@@ -1286,8 +1328,9 @@ public:
      * @param uid UID, as described in the official documentation.
      * @param gid GID, as described in the official documentation.
      */
-    void chown(std::string path, Uid uid, Gid gid) {
-        cleanupAndInvoke(&uv_fs_chown, parent(), get(), path.data(), uid, gid, &fsGenericCallback<Type::CHOWN>);
+    void chown(llvm::StringRef path, Uid uid, Gid gid) {
+        llvm::SmallString<128> path_copy = path;
+        cleanupAndInvoke(&uv_fs_chown, parent(), get(), path_copy.c_str(), uid, gid, &fsGenericCallback<Type::CHOWN>);
     }
 
     /**
@@ -1297,9 +1340,10 @@ public:
      * @param gid GID, as described in the official documentation.
      * @return True in case of success, false otherwise.
      */
-    bool chownSync(std::string path, Uid uid, Gid gid) {
+    bool chownSync(llvm::StringRef path, Uid uid, Gid gid) {
+        llvm::SmallString<128> path_copy = path;
         auto req = get();
-        cleanupAndInvokeSync(&uv_fs_chown, parent(), req, path.data(), uid, gid);
+        cleanupAndInvokeSync(&uv_fs_chown, parent(), req, path_copy.c_str(), uid, gid);
         return !(req->result < 0);
     }
 };

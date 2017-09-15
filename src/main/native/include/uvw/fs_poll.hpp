@@ -6,6 +6,8 @@
 #include <memory>
 #include <chrono>
 #include <uv.h>
+#include "llvm/SmallString.h"
+#include "llvm/StringRef.h"
 #include "handle.hpp"
 #include "util.hpp"
 #include "loop.hpp"
@@ -66,8 +68,9 @@ public:
      * @param file The path to the file to be checked.
      * @param interval Milliseconds between successive checks.
      */
-    void start(std::string file, Time interval) {
-        invoke(&uv_fs_poll_start, get(), &startCallback, file.data(), interval.count());
+    void start(llvm::StringRef file, Time interval) {
+        llvm::SmallString<128> file_copy = file;
+        invoke(&uv_fs_poll_start, get(), &startCallback, file_copy.c_str(), interval.count());
     }
 
     /**

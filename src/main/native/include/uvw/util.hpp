@@ -10,6 +10,8 @@
 #include <vector>
 #include <array>
 #include <uv.h>
+#include "llvm/SmallString.h"
+#include "llvm/StringRef.h"
 
 
 #ifdef _WIN32
@@ -458,8 +460,9 @@ struct Utilities {
          * @return The value of the environment variable, an empty string in
          * case of errors.
          */
-        static std::string env(const std::string &name) noexcept {
-            return details::tryRead(&uv_os_getenv, name.c_str());
+        static std::string env(llvm::StringRef name) noexcept {
+            llvm::SmallString<128> name_buf;
+            return details::tryRead(&uv_os_getenv, name.c_str(name_buf));
         }
 
         /**
@@ -469,8 +472,10 @@ struct Utilities {
          * to unset it).
          * @return True in case of success, false otherwise.
          */
-        static bool env(const std::string &name, const std::string &value) noexcept {
-            return (0 == (value.empty() ? uv_os_unsetenv(name.c_str()) : uv_os_setenv(name.c_str(), value.c_str())));
+        static bool env(llvm::StringRef name, llvm::StringRef value) noexcept {
+            llvm::SmallString<128> name_buf;
+            llvm::SmallString<128> value_buf;
+            return (0 == (value.empty() ? uv_os_unsetenv(name.c_str(name_buf)) : uv_os_setenv(name.c_str(name_buf), value.c_str(value_buf))));
         }
 
         /**
@@ -708,8 +713,9 @@ struct Utilities {
      * @param title The process title to be set.
      * @return True in case of success, false otherwise.
      */
-    static bool processTitle(std::string title) {
-        return (0 == uv_set_process_title(title.c_str()));
+    static bool processTitle(llvm::StringRef title) {
+        llvm::SmallString<128> title_buf;
+        return (0 == uv_set_process_title(title.c_str(title_buf)));
     }
 
     /**

@@ -6,6 +6,8 @@
 #include <type_traits>
 #include <utility>
 #include <uv.h>
+#include "llvm/SmallString.h"
+#include "llvm/StringRef.h"
 #include "loop.hpp"
 #include "underlying_type.hpp"
 
@@ -21,10 +23,11 @@ namespace uvw {
  */
 class SharedLib final: public UnderlyingType<SharedLib, uv_lib_t> {
 public:
-    explicit SharedLib(ConstructorAccess ca, std::shared_ptr<Loop> ref, std::string filename) noexcept
+    explicit SharedLib(ConstructorAccess ca, std::shared_ptr<Loop> ref, llvm::StringRef filename) noexcept
         : UnderlyingType{ca, std::move(ref)}
     {
-        opened = (0 == uv_dlopen(filename.data(), get()));
+        llvm::SmallString<128> filename_buf;
+        opened = (0 == uv_dlopen(filename.c_str(filename_buf), get()));
     }
 
     ~SharedLib() noexcept {
@@ -47,10 +50,11 @@ public:
      * @return A valid function pointer in case of success, `nullptr` otherwise.
      */
     template<typename F>
-    F * sym(std::string name) {
+    F * sym(llvm::StringRef name) {
+        llvm::SmallString<128> name_copy = name;
         static_assert(std::is_function<F>::value, "!");
         F *func;
-        auto err = uv_dlsym(get(), name.data(), reinterpret_cast<void**>(&func));
+        auto err = uv_dlsym(get(), name_copy.c_str(), reinterpret_cast<void**>(&func));
         if(err) { func = nullptr; }
         return func;
     }

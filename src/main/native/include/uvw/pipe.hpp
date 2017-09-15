@@ -6,6 +6,8 @@
 #include <memory>
 #include <string>
 #include <uv.h>
+#include "llvm/SmallString.h"
+#include "llvm/StringRef.h"
 #include "request.hpp"
 #include "stream.hpp"
 #include "util.hpp"
@@ -61,8 +63,9 @@ public:
      *
      * @param name A valid file path.
      */
-    void bind(std::string name) {
-        invoke(&uv_pipe_bind, get(), name.data());
+    void bind(llvm::StringRef name) {
+        llvm::SmallString<128> name_copy = name;
+        invoke(&uv_pipe_bind, get(), name_copy.c_str());
     }
 
     /**
@@ -75,7 +78,8 @@ public:
      *
      * @param name A valid domain socket or named pipe.
      */
-    void connect(std::string name) {
+    void connect(llvm::StringRef name) {
+        llvm::SmallString<128> name_copy = name;
         auto listener = [ptr = shared_from_this()](const auto &event, const auto &) {
             ptr->publish(event);
         };
@@ -83,7 +87,7 @@ public:
         auto connect = loop().resource<details::ConnectReq>();
         connect->once<ErrorEvent>(listener);
         connect->once<ConnectEvent>(listener);
-        connect->connect(&uv_pipe_connect, get(), name.data());
+        connect->connect(&uv_pipe_connect, get(), name_copy.c_str());
     }
 
     /**

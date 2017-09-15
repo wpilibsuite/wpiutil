@@ -5,6 +5,8 @@
 #include <memory>
 #include <string>
 #include <uv.h>
+#include "llvm/SmallString.h"
+#include "llvm/StringRef.h"
 #include "request.hpp"
 #include "util.hpp"
 #include "loop.hpp"
@@ -107,8 +109,9 @@ public:
      * @param hints Optional `addrinfo` data structure with additional address
      * type constraints.
      */
-    void nodeAddrInfo(std::string node, addrinfo *hints = nullptr) {
-        nodeAddrInfo(node.data(), nullptr, hints);
+    void nodeAddrInfo(llvm::StringRef node, addrinfo *hints = nullptr) {
+        llvm::SmallString<128> node_copy = node;
+        nodeAddrInfo(node_copy.c_str(), nullptr, hints);
     }
 
     /**
@@ -123,8 +126,9 @@ public:
      * * A `std::unique_ptr<addrinfo, Deleter>` containing the data requested.
      */
     std::pair<bool, std::unique_ptr<addrinfo, Deleter>>
-    nodeAddrInfoSync(std::string node, addrinfo *hints = nullptr) {
-        return nodeAddrInfoSync(node.data(), nullptr, hints);
+    nodeAddrInfoSync(llvm::StringRef node, addrinfo *hints = nullptr) {
+        llvm::SmallString<128> node_copy = node;
+        return nodeAddrInfoSync(node_copy.c_str(), nullptr, hints);
     }
 
     /**
@@ -133,8 +137,9 @@ public:
      * @param hints Optional `addrinfo` data structure with additional address
      * type constraints.
      */
-    void serviceAddrInfo(std::string service, addrinfo *hints = nullptr) {
-        nodeAddrInfo(nullptr, service.data(), hints);
+    void serviceAddrInfo(llvm::StringRef service, addrinfo *hints = nullptr) {
+        llvm::SmallString<128> service_copy = service;
+        nodeAddrInfo(nullptr, service_copy.c_str(), hints);
     }
 
     /**
@@ -149,8 +154,9 @@ public:
      * * A `std::unique_ptr<addrinfo, Deleter>` containing the data requested.
      */
     std::pair<bool, std::unique_ptr<addrinfo, Deleter>>
-    serviceAddrInfoSync(std::string service, addrinfo *hints = nullptr) {
-        return nodeAddrInfoSync(nullptr, service.data(), hints);
+    serviceAddrInfoSync(llvm::StringRef service, addrinfo *hints = nullptr) {
+        llvm::SmallString<128> service_copy = service;
+        return nodeAddrInfoSync(nullptr, service_copy.c_str(), hints);
     }
 
     /**
@@ -160,8 +166,10 @@ public:
      * @param hints Optional `addrinfo` data structure with additional address
      * type constraints.
      */
-    void addrInfo(std::string node, std::string service, addrinfo *hints = nullptr) {
-        nodeAddrInfo(node.data(), service.data(), hints);
+    void addrInfo(llvm::StringRef node, llvm::StringRef service, addrinfo *hints = nullptr) {
+        llvm::SmallString<128> node_copy = node;
+        llvm::SmallString<128> service_copy = service;
+        nodeAddrInfo(node_copy.c_str(), service_copy.c_str(), hints);
     }
 
     /**
@@ -177,8 +185,10 @@ public:
      * * A `std::unique_ptr<addrinfo, Deleter>` containing the data requested.
      */
     std::pair<bool, std::unique_ptr<addrinfo, Deleter>>
-    addrInfoSync(std::string node, std::string service, addrinfo *hints = nullptr) {
-        return nodeAddrInfoSync(node.data(), service.data(), hints);
+    addrInfoSync(llvm::StringRef node, llvm::StringRef service, addrinfo *hints = nullptr) {
+        llvm::SmallString<128> node_copy = node;
+        llvm::SmallString<128> service_copy = service;
+        return nodeAddrInfoSync(node_copy.c_str(), service_copy.c_str(), hints);
     }
 };
 
@@ -208,9 +218,10 @@ public:
      * @param flags Optional flags that modify the behavior of `getnameinfo`.
      */
     template<typename I = IPv4>
-    void nameInfo(std::string ip, unsigned int port, int flags = 0) {
+    void nameInfo(llvm::StringRef ip, unsigned int port, int flags = 0) {
+        llvm::SmallString<128> ip_copy = ip;
         typename details::IpTraits<I>::Type addr;
-        details::IpTraits<I>::addrFunc(ip.data(), port, &addr);
+        details::IpTraits<I>::addrFunc(ip_copy.c_str(), port, &addr);
         auto saddr = reinterpret_cast<const sockaddr *>(&addr);
         invoke(&uv_getnameinfo, parent(), get(), &nameInfoCallback, saddr, flags);
     }
@@ -240,9 +251,10 @@ public:
      */
     template<typename I = IPv4>
     std::pair<bool, std::pair<const char *, const char *>>
-    nameInfoSync(std::string ip, unsigned int port, int flags = 0) {
+    nameInfoSync(llvm::StringRef ip, unsigned int port, int flags = 0) {
+        llvm::SmallString<128> ip_copy = ip;
         typename details::IpTraits<I>::Type addr;
-        details::IpTraits<I>::addrFunc(ip.data(), port, &addr);
+        details::IpTraits<I>::addrFunc(ip_copy.c_str(), port, &addr);
         auto req = get();
         auto saddr = reinterpret_cast<const sockaddr *>(&addr);
         auto err = uv_getnameinfo(parent(), req, nullptr, saddr, flags);

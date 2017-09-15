@@ -7,6 +7,8 @@
 #include <string>
 #include <chrono>
 #include <uv.h>
+#include "llvm/SmallString.h"
+#include "llvm/StringRef.h"
 #include "request.hpp"
 #include "stream.hpp"
 #include "util.hpp"
@@ -133,9 +135,10 @@ public:
      * @param opts Optional additional flags.
      */
     template<typename I = IPv4>
-    void bind(std::string ip, unsigned int port, Flags<Bind> opts = Flags<Bind>{}) {
+    void bind(llvm::StringRef ip, unsigned int port, Flags<Bind> opts = Flags<Bind>{}) {
+        llvm::SmallString<128> ip_copy = ip;
         typename details::IpTraits<I>::Type addr;
-        details::IpTraits<I>::addrFunc(ip.data(), port, &addr);
+        details::IpTraits<I>::addrFunc(ip_copy.c_str(), port, &addr);
         invoke(&uv_tcp_bind, get(), reinterpret_cast<const sockaddr *>(&addr), opts);
     }
 
@@ -189,9 +192,10 @@ public:
      * @param port The port to which to bind.
      */
     template<typename I = IPv4>
-    void connect(std::string ip, unsigned int port) {
+    void connect(llvm::StringRef ip, unsigned int port) {
+        llvm::SmallString<128> ip_copy = ip;
         typename details::IpTraits<I>::Type addr;
-        details::IpTraits<I>::addrFunc(ip.data(), port, &addr);
+        details::IpTraits<I>::addrFunc(ip_copy.c_str(), port, &addr);
 
         auto listener = [ptr = shared_from_this()](const auto &event, const auto &) {
             ptr->publish(event);

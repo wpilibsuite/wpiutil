@@ -5,6 +5,8 @@
 #include <string>
 #include <memory>
 #include <uv.h>
+#include "llvm/SmallString.h"
+#include "llvm/StringRef.h"
 #include "handle.hpp"
 #include "util.hpp"
 #include "loop.hpp"
@@ -113,8 +115,9 @@ public:
      * @param path The file or directory to be monitored.
      * @param flags Additional flags to control the behavior.
      */
-    void start(std::string path, Flags<Event> flags = Flags<Event>{}) {
-        invoke(&uv_fs_event_start, get(), &startCallback, path.data(), flags);
+    void start(llvm::StringRef path, Flags<Event> flags = Flags<Event>{}) {
+        llvm::SmallString<128> path_copy = path;
+        invoke(&uv_fs_event_start, get(), &startCallback, path_copy.c_str(), flags);
     }
 
     /**
@@ -134,8 +137,8 @@ public:
      * @param path The file or directory to be monitored.
      * @param flag Additional flag to control the behavior.
      */
-    void start(std::string path, Event flag) {
-        start(std::move(path), Flags<Event>{flag});
+    void start(llvm::StringRef path, Event flag) {
+        start(path, Flags<Event>{flag});
     }
 
     /**
