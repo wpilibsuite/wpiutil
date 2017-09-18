@@ -121,6 +121,130 @@ bool ParseHttpHeaders(raw_istream& is, llvm::SmallVectorImpl<char>* contentType,
   }
 }
 
+void HttpHeaderParser::Reset(bool hasStartLine) {
+  m_state = hasStartLine ? kStartLine : kHeaderLine;
+  m_error = false;
+  m_startOfLine = 0;
+  m_pos = 0;
+  m_startLine.first = 0;
+  m_startLine.second = 0;
+  m_headers.resize(0);
+  m_buf.resize(0);
+}
+
+llvm::StringRef HttpHeaderParser::Feed(llvm::StringRef in) {
+  // Simply append the input block to the end of the internal buffer.  This
+  // makes the rest of the processing a lot easier.
+  if (m_state == kDone || in.empty()) return in;
+  m_buf.append(in.data(), in.size());
+
+  for (;;) {
+    // Scan for end of line
+    bool gotEol = false;
+    while (m_pos < m_buf.size()) {
+      if (m_buf[m_pos++] == '\n') {
+        gotEol = true;
+        break;
+      }
+    }
+
+    // Didn't get a whole line yet
+    if (!gotEol) return llvm::StringRef{};
+
+    // Make a StringRef for the line to ease processing
+    llvm::StringRef line(m_buf.data() + m_startOfLine, m_pos - m_startOfLine);
+    m_startOfLine = m_pos;
+
+    line = line.rtrim();
+
+    // empty line signals end of headers
+    if (line.empty()) {
+      m_state = kDone;
+      size_t orig_size = m_buf.size() - in.size();
+      m_buf.resize(m_pos);
+      return in.drop_front(m_pos - orig_size);
+    }
+
+    // handle starting line if requested
+    if (m_state == kStartLine) {
+      m_startLine = MakeBufRef(line);
+      m_state = kHeaderLine;
+      continue;
+    }
+
+    // header fields start at the beginning of the line
+    llvm::StringRef field;
+    if (!std::isspace(line[0])) {
+      std::tie(field, line) = line.split(':');
+      if (field.empty() || std::isspace(field.back())) {
+        m_error = true;  // per RFC7230 section 3.2.4
+        continue;  // ignore this line
+      }
+    }
+
+    // remove leading whitespace
+    line = line.ltrim();
+
+    // save field data
+    if (field.empty()) {
+      // line folding
+      if (m_headers.empty()) {
+        m_error = true;
+        continue;  // ignore this line
+      }
+      m_headers.back().hasFold = true;
+      m_headers.back().value.second =
+          line.end() - m_buf.data() - m_headers.back().value.first;
+    } else {
+      m_headers.emplace_back();
+      m_headers.back().name = MakeBufRef(field);
+      m_headers.back().value = MakeBufRef(line);
+    }
+  }
+}
+
+llvm::StringRef HttpHeaderParser::GetHeader(
+    llvm::StringRef field, llvm::SmallVectorImpl<char>& buf) const {
+  for (const auto& i : m_headers) {
+    if (field == GetBuf(i.name)) {
+      auto raw = GetBuf(i.value);
+      if (!i.hasFold) return raw;
+
+      // slow path, need to copy and collapse CRLF and surrounding whitespace
+      buf.clear();
+      size_t lastNonSpace = 0;
+      bool removeSpace = false;
+      for (auto ch : raw) {
+        switch (ch) {
+          case '\n':
+            // remove trailing whitespace up to this point
+            buf.erase(buf.begin() + lastNonSpace, buf.end());
+            // remove leading whitespace
+            removeSpace = true;
+            // output a single space
+            buf.push_back(' ');
+            break;
+          case '\r':
+            break;  // always remove
+          case '\t':
+          case ' ':
+            if (!removeSpace) buf.push_back(ch);
+            break;
+          default:
+            buf.push_back(ch);
+            lastNonSpace = buf.size();
+            removeSpace = false;
+            break;
+        }
+      }
+      return llvm::StringRef(buf.data(), buf.size());
+    }
+  }
+
+  // not found
+  return llvm::StringRef{};
+}
+
 bool FindMultipartBoundary(raw_istream& is, llvm::StringRef boundary,
                            std::string* saveBuf) {
   llvm::SmallString<64> searchBuf;
@@ -166,6 +290,59 @@ bool FindMultipartBoundary(raw_istream& is, llvm::StringRef boundary,
       searchPos = searchBuf.size() - pos;
     }
   }
+}
+
+void HttpMultipartScanner::Reset(llvm::StringRef boundary, bool saveSkipped) {
+  m_boundary = boundary;
+  m_saveSkipped = saveSkipped;
+  m_state = kBoundary;
+  m_pos = 0;
+  m_buf.resize(0);
+}
+
+llvm::StringRef HttpMultipartScanner::Feed(llvm::StringRef in) {
+  // Simply append the input block to the end of the internal buffer.  This
+  // makes the rest of the processing a lot easier.
+  m_buf.append(in.data(), in.size());
+  auto buf_size = m_buf.size();
+
+  if (m_state == kBoundary) {
+    auto boundary_size = m_boundary.size();
+    for (; buf_size >= (m_pos + boundary_size + 3); ++m_pos) {
+      auto data = m_buf.data() + m_pos;
+      // Look for \n--boundary
+      if (data[0] == '\n' && data[1] == '-' && data[2] == '-' &&
+          llvm::StringRef(&data[3], boundary_size) == m_boundary) {
+        // Found the boundary; transition to padding
+        m_state = kPadding;
+        m_pos += boundary_size + 3;
+        break;
+      }
+    }
+  }
+ 
+  if (m_state == kPadding) {
+    for (; buf_size >= (m_pos + 1); ++m_pos) {
+      if (m_buf[m_pos] == '\n') {
+        // Found the LF; return remaining input buffer (following it)
+        m_state = kDone;
+        ++m_pos;
+        size_t orig_size = buf_size - in.size();
+        m_buf.resize(m_pos);
+        return in.drop_front(m_pos - orig_size);
+      }
+    }
+  }
+
+  // If not saving skipped, dump already-scanned buffer when it reaches a
+  // threshold so it doesn't grow without bound.
+  if (!m_saveSkipped && m_pos > 64000) {
+    m_buf.erase(0, m_pos);
+    m_pos = 0;
+  }
+
+  // We consumed the entire input
+  return llvm::StringRef{};
 }
 
 HttpLocation::HttpLocation(llvm::StringRef url_, bool* error,

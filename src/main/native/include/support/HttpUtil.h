@@ -47,6 +47,67 @@ bool ParseHttpHeaders(wpi::raw_istream& is,
                       llvm::SmallVectorImpl<char>* contentType,
                       llvm::SmallVectorImpl<char>* contentLength);
 
+class HttpHeaderParser {
+ public:
+  explicit HttpHeaderParser(bool hasStartLine) { Reset(hasStartLine); }
+
+  // Reset the parser.  This allows reuse of internal buffers.
+  // This also invalidates any StringRefs previously returned by Get()
+  // functions.
+  void Reset(bool hasStartLine);
+
+  // Feed the parser with more data.
+  // @param in input data
+  // @return the input not consumed; empty if all input consumed
+  llvm::StringRef Feed(llvm::StringRef in);
+
+  // Returns true when all headers have been parsed.
+  bool IsDone() const { return m_state == kDone; }
+
+  // Returns true if there was an error in header parsing.
+  bool HasError() const { return m_error; }
+
+  // Get the start line.
+  // Returns empty if initialized/reset with hasStartLine=false.
+  llvm::StringRef GetStartLine() const { return GetBuf(m_startLine); }
+
+  // Get the contents of a header field.
+  // Returns empty if the header field was not provided.
+  // This collapses folded CRLFs into single spaces.
+  llvm::StringRef GetHeader(llvm::StringRef field,
+                            llvm::SmallVectorImpl<char>& buf) const;
+
+ private:
+  // Internal state
+  enum State { kStartLine, kHeaderLine, kDone };
+  State m_state;
+  bool m_error;
+  size_t m_startOfLine;
+  size_t m_pos;
+
+  // These convert offset+size into m_buf data.  Can't use StringRef directly
+  // as m_buf can get reallocated, invalidating the pointers.
+  typedef std::pair<size_t, size_t> BufRef;
+  llvm::StringRef GetBuf(const BufRef& ref) const {
+    return llvm::StringRef(m_buf.data() + ref.first, ref.second);
+  }
+  BufRef MakeBufRef(llvm::StringRef s) const {
+    BufRef v;
+    v.first = s.data() - m_buf.data();
+    v.second = s.size();
+    return v;
+  }
+
+  BufRef m_startLine;
+  struct Header {
+    BufRef name;
+    BufRef value;
+    bool hasFold = false;
+  };
+  llvm::SmallVector<Header, 16> m_headers;
+  std::string m_buf;
+};
+
 // Look for a MIME multi-part boundary.  On return, the input stream will
 // be located at the character following the boundary (usually "\r\n").
 // @param is Input stream
@@ -56,6 +117,42 @@ bool ParseHttpHeaders(wpi::raw_istream& is,
 // @return False if error occurred on input stream, true if boundary found.
 bool FindMultipartBoundary(wpi::raw_istream& is, llvm::StringRef boundary,
                            std::string* saveBuf);
+
+class HttpMultipartScanner {
+ public:
+  explicit HttpMultipartScanner(llvm::StringRef boundary,
+                                bool saveSkipped = false) {
+    Reset(boundary, saveSkipped);
+  }
+
+  // Reset the scanner.  This allows reuse of internal buffers.
+  void Reset(llvm::StringRef boundary, bool saveSkipped = false);
+
+  // Feed the scanner with more data.
+  // @param in input data
+  // @return the input not consumed; empty if all input consumed
+  llvm::StringRef Feed(llvm::StringRef in);
+
+  // Returns true when the boundary has been found.
+  bool IsDone() const { return m_state == kDone; }
+
+  // Get the skipped data.  Will be empty if saveSkipped was false.
+  llvm::StringRef GetSkipped() const {
+    return m_saveSkipped ? llvm::StringRef{m_buf} : llvm::StringRef{};
+  }
+
+ private:
+  llvm::SmallString<64> m_boundary;
+  bool m_saveSkipped;
+
+  // Internal state
+  enum State { kBoundary, kPadding, kDone };
+  State m_state;
+  size_t m_pos;
+
+  // Buffer
+  std::string m_buf;
+};
 
 class HttpLocation {
  public:
