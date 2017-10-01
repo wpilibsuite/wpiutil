@@ -51,7 +51,7 @@ public class RuntimeDetector {
       } else if (isAarch64()) {
         filePath = "/linux/aarch/";
       } else {
-        filePath = "/linux/arm/";
+        filePath = "/linux/nativearm/";
       }
     } else {
       throw new RuntimeException("Failed to determine OS");
