@@ -11,7 +11,6 @@
 #include <mutex>
 
 #ifdef __linux__
-#include <bits/wordsize.h>
 #include <pthread.h>
 #endif
 
@@ -43,12 +42,12 @@ class priority_recursive_mutex {
  private:
 // Do the equivalent of setting PTHREAD_PRIO_INHERIT and
 // PTHREAD_MUTEX_RECURSIVE_NP.
-#if __WORDSIZE == 64
+#ifdef __PTHREAD_MUTEX_HAVE_PREV
   pthread_mutex_t m_mutex = {
-      {0, 0, 0, 0, 0x20 | PTHREAD_MUTEX_RECURSIVE_NP, 0, 0, {0, 0}}};
+      {0, 0, 0, 0, 0x20 | PTHREAD_MUTEX_RECURSIVE_NP, __PTHREAD_SPINS, {0, 0}}};
 #else
   pthread_mutex_t m_mutex = {
-      {0, 0, 0, 0x20 | PTHREAD_MUTEX_RECURSIVE_NP, 0, {0}}};
+      {0, 0, 0, 0x20 | PTHREAD_MUTEX_RECURSIVE_NP, 0, {__PTHREAD_SPINS}}};
 #endif
 };
 
@@ -73,10 +72,10 @@ class priority_mutex {
 
  private:
 // Do the equivalent of setting PTHREAD_PRIO_INHERIT.
-#if __WORDSIZE == 64
-  pthread_mutex_t m_mutex = {{0, 0, 0, 0, 0x20, 0, 0, {0, 0}}};
+#ifdef __PTHREAD_MUTEX_HAVE_PREV
+  pthread_mutex_t m_mutex = {{0, 0, 0, 0, 0x20, __PTHREAD_SPINS, {0, 0}}};
 #else
-  pthread_mutex_t m_mutex = {{0, 0, 0, 0x20, 0, {0}}};
+  pthread_mutex_t m_mutex = {{0, 0, 0, 0x20, 0, {__PTHREAD_SPINS}}};
 #endif
 };
 
