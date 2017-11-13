@@ -11,6 +11,7 @@
 #include <mutex>
 
 #ifdef __linux__
+#include <bits/wordsize.h>
 #include <pthread.h>
 #endif
 
