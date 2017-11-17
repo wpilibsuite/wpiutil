@@ -19,30 +19,38 @@
 #define ATOMIC_STATIC_DECL(cls)
 #define ATOMIC_STATIC_INIT(cls)
 
+#define ATOMIC_STATIC2(cls, inst, m_inst, args) static cls inst args
+#define ATOMIC_STATIC2_DECL(cls, m_inst)
+#define ATOMIC_STATIC2_INIT(outer, cls, m_inst)
+
 #else
 // From http://preshing.com/20130930/double-checked-locking-is-fixed-in-cpp11/
 #include <atomic>
 #include <mutex>
 
-#define ATOMIC_STATIC(cls, inst) \
-    cls* inst##tmp = m_instance.load(std::memory_order_acquire); \
+#define ATOMIC_STATIC2(cls, inst, m_inst, args) \
+    cls* inst##tmp = m_inst.load(std::memory_order_acquire); \
     if (inst##tmp == nullptr) { \
-      std::lock_guard<std::mutex> lock(m_instance_mutex); \
-      inst##tmp = m_instance.load(std::memory_order_relaxed); \
+      std::lock_guard<std::mutex> lock(m_inst##_mutex); \
+      inst##tmp = m_inst.load(std::memory_order_relaxed); \
       if (inst##tmp == nullptr) { \
-        inst##tmp = new cls; \
-        m_instance.store(inst##tmp, std::memory_order_release); \
+        inst##tmp = new cls args; \
+        m_inst.store(inst##tmp, std::memory_order_release); \
       } \
     } \
     cls& inst = *inst##tmp
 
-#define ATOMIC_STATIC_DECL(cls) \
-    static std::atomic<cls*> m_instance; \
-    static std::mutex m_instance_mutex;
+#define ATOMIC_STATIC2_DECL(cls, m_inst) \
+    static std::atomic<cls*> m_inst; \
+    static std::mutex m_inst##_mutex;
 
-#define ATOMIC_STATIC_INIT(cls) \
-    std::atomic<cls*> cls::m_instance; \
-    std::mutex cls::m_instance_mutex;
+#define ATOMIC_STATIC2_INIT(outer, cls, m_inst) \
+    std::atomic<cls*> outer::m_inst; \
+    std::mutex outer::m_inst##_mutex;
+
+#define ATOMIC_STATIC(cls, inst) ATOMIC_STATIC2(cls, inst, m_instance, /*no*/)
+#define ATOMIC_STATIC_DECL(cls) ATOMIC_STATIC2_DECL(cls, m_instance)
+#define ATOMIC_STATIC_INIT(cls) ATOMIC_STATIC2_INIT(cls, cls, m_instance)
 
 #endif
 
