@@ -21,6 +21,7 @@ class Logger;
 
 class UDPClient {
   int m_lsd;
+  int m_port;
   std::string m_address;
   Logger& m_logger;
 
@@ -35,10 +36,14 @@ public:
   UDPClient& operator=(UDPClient&& other);
 
   int start();
+  int start(int port);
   void shutdown();
   // The passed in address MUST be a resolved IP address.
   int send(llvm::ArrayRef<uint8_t> data, llvm::StringRef server, int port);
   int send(llvm::StringRef data, llvm::StringRef server, int port);
+  int receive(uint8_t* data_received, int receive_len,
+              llvm::SmallVectorImpl<char>* addr_received, int* port_received);
+  int set_timeout(double timeout);
 };
 
 }  // namespace wpi
