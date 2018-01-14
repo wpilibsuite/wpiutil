@@ -14,7 +14,7 @@ namespace wpi {
 
 class NetworkStream;
 
-class raw_socket_ostream : public llvm::raw_ostream {
+class raw_socket_ostream : public wpi_llvm::raw_ostream {
  public:
   raw_socket_ostream(NetworkStream& stream, bool shouldClose)
       : m_stream(stream), m_shouldClose(shouldClose) {}

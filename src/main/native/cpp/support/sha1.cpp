@@ -214,7 +214,7 @@ static void buffer_to_block(const unsigned char* buffer,
 
 SHA1::SHA1() { reset(digest, buf_size, transforms); }
 
-void SHA1::Update(llvm::StringRef s) {
+void SHA1::Update(wpi_llvm::StringRef s) {
   raw_mem_istream is(s);
   Update(is);
 }
@@ -237,7 +237,7 @@ void SHA1::Update(raw_istream& is) {
  */
 
 static void finalize(uint32_t digest[], unsigned char* buffer, size_t& buf_size,
-                     uint64_t& transforms, llvm::raw_ostream& os) {
+                     uint64_t& transforms, wpi_llvm::raw_ostream& os) {
   /* Total number of hashed bits */
   uint64_t total_bits = (transforms * BLOCK_BYTES + buf_size) * 8;
 
@@ -277,22 +277,22 @@ static void finalize(uint32_t digest[], unsigned char* buffer, size_t& buf_size,
 
 std::string SHA1::Final() {
   std::string out;
-  llvm::raw_string_ostream os(out);
+  wpi_llvm::raw_string_ostream os(out);
 
   finalize(digest, buffer, buf_size, transforms, os);
 
   return os.str();
 }
 
-llvm::StringRef SHA1::Final(llvm::SmallVectorImpl<char>& buf) {
-  llvm::raw_svector_ostream os(buf);
+wpi_llvm::StringRef SHA1::Final(wpi_llvm::SmallVectorImpl<char>& buf) {
+  wpi_llvm::raw_svector_ostream os(buf);
 
   finalize(digest, buffer, buf_size, transforms, os);
 
   return os.str();
 }
 
-std::string SHA1::FromFile(llvm::StringRef filename) {
+std::string SHA1::FromFile(wpi_llvm::StringRef filename) {
   std::error_code ec;
   raw_fd_istream stream(filename, ec);
   SHA1 checksum;

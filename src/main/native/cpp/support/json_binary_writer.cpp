@@ -56,7 +56,7 @@ class json::binary_writer
 
     @param[in] adapter  output adapter to write to
     */
-    explicit binary_writer(llvm::raw_ostream& s)
+    explicit binary_writer(wpi_llvm::raw_ostream& s)
         : is_little_endian(little_endianess()), o(s)
     {
     }
@@ -88,12 +88,12 @@ class json::binary_writer
     /*!
     @brief[in] str string to serialize
     */
-    void write_cbor_string(llvm::StringRef str);
+    void write_cbor_string(wpi_llvm::StringRef str);
 
     /*!
     @brief[in] str string to serialize
     */
-    void write_msgpack_string(llvm::StringRef str);
+    void write_msgpack_string(wpi_llvm::StringRef str);
 
     /*
     @brief write a number to output input
@@ -132,7 +132,7 @@ class json::binary_writer
     const bool is_little_endian = true;
 
     /// the output
-    llvm::raw_ostream& o;
+    wpi_llvm::raw_ostream& o;
 };
 
 void json::binary_writer::write_cbor(const json& j)
@@ -345,7 +345,7 @@ void json::binary_writer::write_cbor(const json& j)
     }
 }
 
-void json::binary_writer::write_cbor_string(llvm::StringRef str)
+void json::binary_writer::write_cbor_string(wpi_llvm::StringRef str)
 {
     // step 1: write control byte and the string length
     const auto N = str.size();
@@ -587,7 +587,7 @@ void json::binary_writer::write_msgpack(const json& j)
     }
 }
 
-void json::binary_writer::write_msgpack_string(llvm::StringRef str)
+void json::binary_writer::write_msgpack_string(wpi_llvm::StringRef str)
 {
     // step 1: write control byte and the string length
     const auto N = str.size();
@@ -619,15 +619,15 @@ void json::binary_writer::write_msgpack_string(llvm::StringRef str)
     o << str;
 }
 
-void json::to_cbor(llvm::raw_ostream& os, const json& j)
+void json::to_cbor(wpi_llvm::raw_ostream& os, const json& j)
 {
     binary_writer bw(os);
     bw.write_cbor(j);
 }
 
-llvm::StringRef json::to_cbor(const json& j, llvm::SmallVectorImpl<char> buf)
+wpi_llvm::StringRef json::to_cbor(const json& j, wpi_llvm::SmallVectorImpl<char> buf)
 {
-    llvm::raw_svector_ostream os(buf);
+    wpi_llvm::raw_svector_ostream os(buf);
     binary_writer bw(os);
     bw.write_cbor(j);
     return os.str();
@@ -636,22 +636,22 @@ llvm::StringRef json::to_cbor(const json& j, llvm::SmallVectorImpl<char> buf)
 std::string json::to_cbor(const json& j)
 {
     std::string s;
-    llvm::raw_string_ostream os(s);
+    wpi_llvm::raw_string_ostream os(s);
     binary_writer bw(os);
     bw.write_cbor(j);
     os.flush();
     return s;
 }
 
-void json::to_msgpack(llvm::raw_ostream& os, const json& j)
+void json::to_msgpack(wpi_llvm::raw_ostream& os, const json& j)
 {
     binary_writer bw(os);
     bw.write_msgpack(j);
 }
 
-llvm::StringRef json::to_msgpack(const json& j, llvm::SmallVectorImpl<char> buf)
+wpi_llvm::StringRef json::to_msgpack(const json& j, wpi_llvm::SmallVectorImpl<char> buf)
 {
-    llvm::raw_svector_ostream os(buf);
+    wpi_llvm::raw_svector_ostream os(buf);
     binary_writer bw(os);
     bw.write_msgpack(j);
     return os.str();
@@ -660,7 +660,7 @@ llvm::StringRef json::to_msgpack(const json& j, llvm::SmallVectorImpl<char> buf)
 std::string json::to_msgpack(const json& j)
 {
     std::string s;
-    llvm::raw_string_ostream os(s);
+    wpi_llvm::raw_string_ostream os(s);
     binary_writer bw(os);
     bw.write_msgpack(j);
     os.flush();

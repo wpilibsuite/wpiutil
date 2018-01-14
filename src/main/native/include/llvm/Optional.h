@@ -23,7 +23,7 @@
 #include <new>
 #include <utility>
 
-namespace llvm {
+namespace wpi_llvm {
 
 template<typename T>
 class Optional {

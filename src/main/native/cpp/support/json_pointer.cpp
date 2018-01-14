@@ -505,7 +505,7 @@ json json::json_pointer::unflatten(const json& value)
     }
 
     // we need to iterate over the object values in sorted key order
-    llvm::SmallVector<llvm::StringMapConstIterator<json>, 64> sorted;
+    wpi_llvm::SmallVector<wpi_llvm::StringMapConstIterator<json>, 64> sorted;
     for (auto i = value.m_value.object->begin(),
          end = value.m_value.object->end(); i != end; ++i)
     {
@@ -516,8 +516,8 @@ json json::json_pointer::unflatten(const json& value)
         sorted.push_back(i);
     }
     std::sort(sorted.begin(), sorted.end(),
-              [](const llvm::StringMapConstIterator<json>& a,
-                 const llvm::StringMapConstIterator<json>& b) {
+              [](const wpi_llvm::StringMapConstIterator<json>& a,
+                 const wpi_llvm::StringMapConstIterator<json>& b) {
                 return a->getKey() < b->getKey();
               });
 

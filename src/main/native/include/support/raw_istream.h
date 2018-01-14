@@ -56,7 +56,7 @@ class raw_istream {
   // @param buf Buffer for output
   // @param maxLen Maximum length
   // @return Line
-  llvm::StringRef getline(llvm::SmallVectorImpl<char>& buf, int maxLen);
+  wpi_llvm::StringRef getline(wpi_llvm::SmallVectorImpl<char>& buf, int maxLen);
 
   virtual void close() = 0;
   virtual size_t in_avail() const = 0;
@@ -78,7 +78,7 @@ class raw_istream {
 
 class raw_mem_istream : public raw_istream {
  public:
-  explicit raw_mem_istream(llvm::StringRef mem);
+  explicit raw_mem_istream(wpi_llvm::StringRef mem);
   raw_mem_istream(const char* mem, size_t len) : m_cur(mem), m_left(len) {}
   void close() override;
   size_t in_avail() const override;
@@ -92,7 +92,7 @@ class raw_mem_istream : public raw_istream {
 
 class raw_fd_istream : public raw_istream {
  public:
-  raw_fd_istream(const llvm::Twine& filename, std::error_code& ec,
+  raw_fd_istream(const wpi_llvm::Twine& filename, std::error_code& ec,
                  size_t bufSize = 4096);
   raw_fd_istream(int fd, bool shouldClose, size_t bufSize = 4096);
   ~raw_fd_istream() override;

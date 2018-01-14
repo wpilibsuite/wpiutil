@@ -30,15 +30,15 @@ namespace wpi {
 // @param buf Buffer for output
 // @param error Set to true if an error occurred
 // @return Escaped string
-llvm::StringRef UnescapeURI(const llvm::Twine& str,
-                            llvm::SmallVectorImpl<char>& buf, bool* error);
+wpi_llvm::StringRef UnescapeURI(const wpi_llvm::Twine& str,
+                            wpi_llvm::SmallVectorImpl<char>& buf, bool* error);
 
 // Escape a string with %xx-encoding.
 // @param buf Buffer for output
 // @param spacePlus If true, encodes spaces to '+' rather than "%20"
 // @return Escaped string
-llvm::StringRef EscapeURI(const llvm::Twine& str,
-                          llvm::SmallVectorImpl<char>& buf,
+wpi_llvm::StringRef EscapeURI(const wpi_llvm::Twine& str,
+                          wpi_llvm::SmallVectorImpl<char>& buf,
                           bool spacePlus = true);
 
 // Parse a set of HTTP headers.  Saves just the Content-Type and Content-Length
@@ -48,8 +48,8 @@ llvm::StringRef EscapeURI(const llvm::Twine& str,
 // @param contentLength If not null, Content-Length contents are saved here.
 // @return False if error occurred in input stream
 bool ParseHttpHeaders(wpi::raw_istream& is,
-                      llvm::SmallVectorImpl<char>* contentType,
-                      llvm::SmallVectorImpl<char>* contentLength);
+                      wpi_llvm::SmallVectorImpl<char>* contentType,
+                      wpi_llvm::SmallVectorImpl<char>* contentLength);
 
 // Look for a MIME multi-part boundary.  On return, the input stream will
 // be located at the character following the boundary (usually "\r\n").
@@ -58,13 +58,13 @@ bool ParseHttpHeaders(wpi::raw_istream& is,
 // @param saveBuf If not null, all scanned characters up to but not including
 //     the boundary are saved to this string
 // @return False if error occurred on input stream, true if boundary found.
-bool FindMultipartBoundary(wpi::raw_istream& is, llvm::StringRef boundary,
+bool FindMultipartBoundary(wpi::raw_istream& is, wpi_llvm::StringRef boundary,
                            std::string* saveBuf);
 
 class HttpLocation {
  public:
   HttpLocation() = default;
-  HttpLocation(const llvm::Twine& url_, bool* error, std::string* errorMsg);
+  HttpLocation(const wpi_llvm::Twine& url_, bool* error, std::string* errorMsg);
 
   std::string url;       // retain copy
   std::string user;      // unescaped
@@ -89,38 +89,38 @@ class HttpRequest {
   template <typename T>
   HttpRequest(const HttpLocation& loc, const T& extraParams);
 
-  HttpRequest(const HttpLocation& loc, llvm::StringRef path_)
+  HttpRequest(const HttpLocation& loc, wpi_llvm::StringRef path_)
       : host{loc.host}, port{loc.port}, path{path_} {
     SetAuth(loc);
   }
 
   template <typename T>
-  HttpRequest(const HttpLocation& loc, llvm::StringRef path_, const T& params)
+  HttpRequest(const HttpLocation& loc, wpi_llvm::StringRef path_, const T& params)
       : host{loc.host}, port{loc.port} {
     SetPath(path_, params);
     SetAuth(loc);
   }
 
-  llvm::SmallString<128> host;
+  wpi_llvm::SmallString<128> host;
   int port;
   std::string auth;
-  llvm::SmallString<128> path;
+  wpi_llvm::SmallString<128> path;
 
  private:
   void SetAuth(const HttpLocation& loc);
   template <typename T>
-  void SetPath(llvm::StringRef path_, const T& params);
+  void SetPath(wpi_llvm::StringRef path_, const T& params);
 
   template <typename T>
-  static llvm::StringRef GetFirst(const T& elem) {
+  static wpi_llvm::StringRef GetFirst(const T& elem) {
     return elem.first;
   }
   template <typename T>
-  static llvm::StringRef GetFirst(const llvm::StringMapEntry<T>& elem) {
+  static wpi_llvm::StringRef GetFirst(const wpi_llvm::StringMapEntry<T>& elem) {
     return elem.getKey();
   }
   template <typename T>
-  static llvm::StringRef GetSecond(const T& elem) {
+  static wpi_llvm::StringRef GetSecond(const T& elem) {
     return elem.second;
   }
 };
@@ -137,8 +137,8 @@ class HttpConnection {
   wpi::raw_socket_ostream os;
 
   // Valid after Handshake() is successful
-  llvm::SmallString<64> contentType;
-  llvm::SmallString<64> contentLength;
+  wpi_llvm::SmallString<64> contentType;
+  wpi_llvm::SmallString<64> contentLength;
 
   explicit operator bool() const { return stream && !is.has_error(); }
 };

@@ -22,7 +22,7 @@
 #include <utility>
 #include <iterator>
 
-namespace llvm {
+namespace wpi_llvm {
 
 /// \brief A range adaptor for a pair of iterators.
 ///

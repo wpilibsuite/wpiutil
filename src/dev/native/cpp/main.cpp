@@ -12,6 +12,6 @@
 #include "support/hostname.h"
 
 int main() {
-  llvm::StringRef v1("Hello");
+  wpi_llvm::StringRef v1("Hello");
   std::cout << v1.lower() << std::endl;
 }

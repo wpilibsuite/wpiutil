@@ -80,7 +80,7 @@ static const unsigned char pr2six[256] = {
     64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
     64, 64, 64, 64, 64, 64, 64, 64, 64};
 
-size_t Base64Decode(llvm::raw_ostream& os, llvm::StringRef encoded) {
+size_t Base64Decode(wpi_llvm::raw_ostream& os, wpi_llvm::StringRef encoded) {
   const unsigned char* end = encoded.bytes_begin();
   while (pr2six[*end] <= 63 && end != encoded.bytes_end()) ++end;
   size_t nprbytes = end - encoded.bytes_begin();
@@ -107,18 +107,18 @@ size_t Base64Decode(llvm::raw_ostream& os, llvm::StringRef encoded) {
   return (end - encoded.bytes_begin()) + ((4 - nprbytes) & 3);
 }
 
-size_t Base64Decode(llvm::StringRef encoded, std::string* plain) {
+size_t Base64Decode(wpi_llvm::StringRef encoded, std::string* plain) {
   plain->resize(0);
-  llvm::raw_string_ostream os(*plain);
+  wpi_llvm::raw_string_ostream os(*plain);
   size_t rv = Base64Decode(os, encoded);
   os.flush();
   return rv;
 }
 
-llvm::StringRef Base64Decode(llvm::StringRef encoded, size_t* num_read,
-                             llvm::SmallVectorImpl<char>& buf) {
+wpi_llvm::StringRef Base64Decode(wpi_llvm::StringRef encoded, size_t* num_read,
+                             wpi_llvm::SmallVectorImpl<char>& buf) {
   buf.clear();
-  llvm::raw_svector_ostream os(buf);
+  wpi_llvm::raw_svector_ostream os(buf);
   *num_read = Base64Decode(os, encoded);
   return os.str();
 }
@@ -126,7 +126,7 @@ llvm::StringRef Base64Decode(llvm::StringRef encoded, size_t* num_read,
 static const char basis_64[] =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-void Base64Encode(llvm::raw_ostream& os, llvm::StringRef plain) {
+void Base64Encode(wpi_llvm::raw_ostream& os, wpi_llvm::StringRef plain) {
   if (plain.empty()) return;
   size_t len = plain.size();
 
@@ -153,17 +153,17 @@ void Base64Encode(llvm::raw_ostream& os, llvm::StringRef plain) {
   }
 }
 
-void Base64Encode(llvm::StringRef plain, std::string* encoded) {
+void Base64Encode(wpi_llvm::StringRef plain, std::string* encoded) {
   encoded->resize(0);
-  llvm::raw_string_ostream os(*encoded);
+  wpi_llvm::raw_string_ostream os(*encoded);
   Base64Encode(os, plain);
   os.flush();
 }
 
-llvm::StringRef Base64Encode(llvm::StringRef plain,
-                             llvm::SmallVectorImpl<char>& buf) {
+wpi_llvm::StringRef Base64Encode(wpi_llvm::StringRef plain,
+                             wpi_llvm::SmallVectorImpl<char>& buf) {
   buf.clear();
-  llvm::raw_svector_ostream os(buf);
+  wpi_llvm::raw_svector_ostream os(buf);
   Base64Encode(os, plain);
   return os.str();
 }

@@ -27,7 +27,7 @@
 #include <intrin.h>
 #endif
 
-namespace llvm {
+namespace wpi_llvm {
 /// \brief The behavior an operation has on an input of 0.
 enum ZeroBehavior {
   /// \brief The returned value is undefined.
@@ -648,6 +648,6 @@ SaturatingMultiplyAdd(T X, T Y, T A, bool *ResultOverflowed = nullptr) {
   return SaturatingAdd(A, Product, &Overflowed);
 }
 
-} // namespace llvm
+} // namespace wpi_llvm
 
 #endif

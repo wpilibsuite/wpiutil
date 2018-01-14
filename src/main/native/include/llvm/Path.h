@@ -7,7 +7,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// This file declares the llvm::sys::path namespace. It is designed after
+// This file declares the wpi_llvm::sys::path namespace. It is designed after
 // TR2/boost filesystem (v3), but modified to remove exception handling and the
 // path class.
 //
@@ -21,7 +21,7 @@
 
 #include <stdint.h>
 
-namespace llvm {
+namespace wpi_llvm {
 namespace sys {
 namespace path {
 
@@ -452,6 +452,6 @@ bool remove_dots(SmallVectorImpl<char> &path, bool remove_dot_dot = false);
 
 } // end namespace path
 } // end namespace sys
-} // end namespace llvm
+} // end namespace wpi_llvm
 
 #endif
