@@ -17,10 +17,10 @@
 
 namespace wpi {
 
-llvm::StringRef UnescapeURI(const llvm::Twine& str,
-                            llvm::SmallVectorImpl<char>& buf, bool* error) {
-  llvm::SmallString<128> strBuf;
-  llvm::StringRef strStr = str.toStringRef(strBuf);
+wpi_llvm::StringRef UnescapeURI(const wpi_llvm::Twine& str,
+                            wpi_llvm::SmallVectorImpl<char>& buf, bool* error) {
+  wpi_llvm::SmallString<128> strBuf;
+  wpi_llvm::StringRef strStr = str.toStringRef(strBuf);
   buf.clear();
   for (auto i = strStr.begin(), end = strStr.end(); i != end; ++i) {
     // pass non-escaped characters to output
@@ -36,33 +36,33 @@ llvm::StringRef UnescapeURI(const llvm::Twine& str,
     // are there enough characters left?
     if (i + 2 >= end) {
       *error = true;
-      return llvm::StringRef{};
+      return wpi_llvm::StringRef{};
     }
 
     // replace %xx with the corresponding character
-    unsigned val1 = llvm::hexDigitValue(*++i);
+    unsigned val1 = wpi_llvm::hexDigitValue(*++i);
     if (val1 == -1U) {
       *error = true;
-      return llvm::StringRef{};
+      return wpi_llvm::StringRef{};
     }
-    unsigned val2 = llvm::hexDigitValue(*++i);
+    unsigned val2 = wpi_llvm::hexDigitValue(*++i);
     if (val2 == -1U) {
       *error = true;
-      return llvm::StringRef{};
+      return wpi_llvm::StringRef{};
     }
     buf.push_back((val1 << 4) | val2);
   }
 
   *error = false;
-  return llvm::StringRef{buf.data(), buf.size()};
+  return wpi_llvm::StringRef{buf.data(), buf.size()};
 }
 
-llvm::StringRef EscapeURI(const llvm::Twine& str,
-                          llvm::SmallVectorImpl<char>& buf, bool spacePlus) {
+wpi_llvm::StringRef EscapeURI(const wpi_llvm::Twine& str,
+                          wpi_llvm::SmallVectorImpl<char>& buf, bool spacePlus) {
   static const char* const hexLut = "0123456789ABCDEF";
 
-  llvm::SmallString<128> strBuf;
-  llvm::StringRef strStr = str.toStringRef(strBuf);
+  wpi_llvm::SmallString<128> strBuf;
+  wpi_llvm::StringRef strStr = str.toStringRef(strBuf);
   buf.clear();
   for (auto i = strStr.begin(), end = strStr.end(); i != end; ++i) {
     // pass unreserved characters to output
@@ -83,19 +83,19 @@ llvm::StringRef EscapeURI(const llvm::Twine& str,
     buf.push_back(hexLut[(*i) & 0x0f]);
   }
 
-  return llvm::StringRef{buf.data(), buf.size()};
+  return wpi_llvm::StringRef{buf.data(), buf.size()};
 }
 
-bool ParseHttpHeaders(raw_istream& is, llvm::SmallVectorImpl<char>* contentType,
-                      llvm::SmallVectorImpl<char>* contentLength) {
+bool ParseHttpHeaders(raw_istream& is, wpi_llvm::SmallVectorImpl<char>* contentType,
+                      wpi_llvm::SmallVectorImpl<char>* contentLength) {
   if (contentType) contentType->clear();
   if (contentLength) contentLength->clear();
 
   bool inContentType = false;
   bool inContentLength = false;
-  llvm::SmallString<64> lineBuf;
+  wpi_llvm::SmallString<64> lineBuf;
   for (;;) {
-    llvm::StringRef line = is.getline(lineBuf, 1024).rtrim();
+    wpi_llvm::StringRef line = is.getline(lineBuf, 1024).rtrim();
     if (is.has_error()) return false;
     if (line.empty()) return true;  // empty line signals end of headers
 
@@ -103,7 +103,7 @@ bool ParseHttpHeaders(raw_istream& is, llvm::SmallVectorImpl<char>* contentType,
     if (!std::isspace(line[0])) {
       inContentType = false;
       inContentLength = false;
-      llvm::StringRef field;
+      wpi_llvm::StringRef field;
       std::tie(field, line) = line.split(':');
       field = field.rtrim();
       if (field.equals_lower("content-type"))
@@ -125,9 +125,9 @@ bool ParseHttpHeaders(raw_istream& is, llvm::SmallVectorImpl<char>* contentType,
   }
 }
 
-bool FindMultipartBoundary(raw_istream& is, llvm::StringRef boundary,
+bool FindMultipartBoundary(raw_istream& is, wpi_llvm::StringRef boundary,
                            std::string* saveBuf) {
-  llvm::SmallString<64> searchBuf;
+  wpi_llvm::SmallString<64> searchBuf;
   searchBuf.resize(boundary.size() + 2);
   size_t searchPos = 0;
 
@@ -157,7 +157,7 @@ bool FindMultipartBoundary(raw_istream& is, llvm::StringRef boundary,
 
     // Fast-scan for '-'
     size_t pos = searchBuf.find('-', searchBuf[0] == '-' ? 1 : 0);
-    if (pos == llvm::StringRef::npos) {
+    if (pos == wpi_llvm::StringRef::npos) {
       if (saveBuf) saveBuf->append(searchBuf.data(), searchBuf.size());
     } else {
       if (saveBuf) saveBuf->append(searchBuf.data(), pos);
@@ -170,14 +170,14 @@ bool FindMultipartBoundary(raw_istream& is, llvm::StringRef boundary,
   }
 }
 
-HttpLocation::HttpLocation(const llvm::Twine& url_, bool* error,
+HttpLocation::HttpLocation(const wpi_llvm::Twine& url_, bool* error,
                            std::string* errorMsg)
     : url{url_.str()} {
   // Split apart into components
-  llvm::StringRef query{url};
+  wpi_llvm::StringRef query{url};
 
   // scheme:
-  llvm::StringRef scheme;
+  wpi_llvm::StringRef scheme;
   std::tie(scheme, query) = query.split(':');
   if (!scheme.equals_lower("http")) {
     *errorMsg = "only supports http URLs";
@@ -194,38 +194,38 @@ HttpLocation::HttpLocation(const llvm::Twine& url_, bool* error,
   query = query.drop_front(2);
 
   // user:password@host:port/
-  llvm::StringRef authority;
+  wpi_llvm::StringRef authority;
   std::tie(authority, query) = query.split('/');
 
-  llvm::StringRef userpass, hostport;
+  wpi_llvm::StringRef userpass, hostport;
   std::tie(userpass, hostport) = authority.split('@');
   // split leaves the RHS empty if the split char isn't present...
   if (hostport.empty()) {
     hostport = userpass;
-    userpass = llvm::StringRef{};
+    userpass = wpi_llvm::StringRef{};
   }
 
   if (!userpass.empty()) {
-    llvm::StringRef rawUser, rawPassword;
+    wpi_llvm::StringRef rawUser, rawPassword;
     std::tie(rawUser, rawPassword) = userpass.split(':');
-    llvm::SmallString<64> userBuf, passBuf;
+    wpi_llvm::SmallString<64> userBuf, passBuf;
     user = UnescapeURI(rawUser, userBuf, error);
     if (*error) {
-      llvm::raw_string_ostream oss(*errorMsg);
+      wpi_llvm::raw_string_ostream oss(*errorMsg);
       oss << "could not unescape user \"" << rawUser << "\"";
       oss.flush();
       return;
     }
     password = UnescapeURI(rawPassword, passBuf, error);
     if (*error) {
-      llvm::raw_string_ostream oss(*errorMsg);
+      wpi_llvm::raw_string_ostream oss(*errorMsg);
       oss << "could not unescape password \"" << rawPassword << "\"";
       oss.flush();
       return;
     }
   }
 
-  llvm::StringRef portStr;
+  wpi_llvm::StringRef portStr;
   std::tie(host, portStr) = hostport.rsplit(':');
   if (host.empty()) {
     *errorMsg = "host is empty";
@@ -235,7 +235,7 @@ HttpLocation::HttpLocation(const llvm::Twine& url_, bool* error,
   if (portStr.empty()) {
     port = 80;
   } else if (portStr.getAsInteger(10, port)) {
-    llvm::raw_string_ostream oss(*errorMsg);
+    wpi_llvm::raw_string_ostream oss(*errorMsg);
     oss << "port \"" << portStr << "\" is not an integer";
     oss.flush();
     *error = true;
@@ -249,27 +249,27 @@ HttpLocation::HttpLocation(const llvm::Twine& url_, bool* error,
   // Split query string into parameters
   while (!query.empty()) {
     // split out next param and value
-    llvm::StringRef rawParam, rawValue;
+    wpi_llvm::StringRef rawParam, rawValue;
     std::tie(rawParam, query) = query.split('&');
     if (rawParam.empty()) continue;  // ignore "&&"
     std::tie(rawParam, rawValue) = rawParam.split('=');
 
     // unescape param
     *error = false;
-    llvm::SmallString<64> paramBuf;
-    llvm::StringRef param = UnescapeURI(rawParam, paramBuf, error);
+    wpi_llvm::SmallString<64> paramBuf;
+    wpi_llvm::StringRef param = UnescapeURI(rawParam, paramBuf, error);
     if (*error) {
-      llvm::raw_string_ostream oss(*errorMsg);
+      wpi_llvm::raw_string_ostream oss(*errorMsg);
       oss << "could not unescape parameter \"" << rawParam << "\"";
       oss.flush();
       return;
     }
 
     // unescape value
-    llvm::SmallString<64> valueBuf;
-    llvm::StringRef value = UnescapeURI(rawValue, valueBuf, error);
+    wpi_llvm::SmallString<64> valueBuf;
+    wpi_llvm::StringRef value = UnescapeURI(rawValue, valueBuf, error);
     if (*error) {
-      llvm::raw_string_ostream oss(*errorMsg);
+      wpi_llvm::raw_string_ostream oss(*errorMsg);
       oss << "could not unescape value \"" << rawValue << "\"";
       oss.flush();
       return;
@@ -283,7 +283,7 @@ HttpLocation::HttpLocation(const llvm::Twine& url_, bool* error,
 
 void HttpRequest::SetAuth(const HttpLocation& loc) {
   if (!loc.user.empty()) {
-    llvm::SmallString<64> userpass;
+    wpi_llvm::SmallString<64> userpass;
     userpass += loc.user;
     userpass += ':';
     userpass += loc.password;
@@ -302,15 +302,15 @@ bool HttpConnection::Handshake(const HttpRequest& request,
   os.flush();
 
   // read first line of response
-  llvm::SmallString<64> lineBuf;
-  llvm::StringRef line = is.getline(lineBuf, 1024).rtrim();
+  wpi_llvm::SmallString<64> lineBuf;
+  wpi_llvm::StringRef line = is.getline(lineBuf, 1024).rtrim();
   if (is.has_error()) {
     *warnMsg = "disconnected before response";
     return false;
   }
 
   // see if we got a HTTP 200 response
-  llvm::StringRef httpver, code, codeText;
+  wpi_llvm::StringRef httpver, code, codeText;
   std::tie(httpver, line) = line.split(' ');
   std::tie(code, codeText) = line.split(' ');
   if (!httpver.startswith("HTTP")) {
@@ -318,7 +318,7 @@ bool HttpConnection::Handshake(const HttpRequest& request,
     return false;
   }
   if (code != "200") {
-    llvm::raw_string_ostream oss(*warnMsg);
+    wpi_llvm::raw_string_ostream oss(*warnMsg);
     oss << "received " << code << " " << codeText << " response";
     oss.flush();
     return false;

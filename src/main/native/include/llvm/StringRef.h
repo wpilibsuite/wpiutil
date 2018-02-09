@@ -20,7 +20,7 @@
 #include <string>
 #include <utility>
 
-namespace llvm {
+namespace wpi_llvm {
   template <typename T>
   class SmallVectorImpl;
   class hash_code;
@@ -140,7 +140,7 @@ namespace llvm {
 
     /// c_str - Get a null terminated pointer to the start of the string
     /// If string is not null terminated, use buffer to store new string
-    const char *c_str(llvm::SmallVectorImpl<char>& buf) const;
+    const char *c_str(wpi_llvm::SmallVectorImpl<char>& buf) const;
 
     /// empty - Check if the string is empty.
     bool empty() const { return size() == 0; }
@@ -621,6 +621,6 @@ namespace llvm {
   // StringRefs can be treated like a POD type.
   template <typename T> struct isPodLike;
   template <> struct isPodLike<StringRef> { static const bool value = true; };
-} // namespace llvm
+} // namespace wpi_llvm
 
 #endif

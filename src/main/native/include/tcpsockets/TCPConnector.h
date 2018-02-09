@@ -40,7 +40,7 @@ class TCPConnector {
                                                 Logger& logger,
                                                 int timeout = 0);
   static std::unique_ptr<NetworkStream> connect_parallel(
-      llvm::ArrayRef<std::pair<const char*, int>> servers, Logger& logger,
+      wpi_llvm::ArrayRef<std::pair<const char*, int>> servers, Logger& logger,
       int timeout = 0);
 };
 

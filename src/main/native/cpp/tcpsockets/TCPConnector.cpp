@@ -89,7 +89,7 @@ std::unique_ptr<NetworkStream> TCPConnector::connect(const char* server,
   address.sin_family = AF_INET;
   if (ResolveHostName(server, &(address.sin_addr)) != 0) {
 #ifdef _WIN32
-    llvm::SmallString<128> addr_copy(server);
+    wpi_llvm::SmallString<128> addr_copy(server);
     addr_copy.push_back('\0');
     int res = InetPton(PF_INET, addr_copy.data(), &(address.sin_addr));
 #else

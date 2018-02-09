@@ -17,7 +17,7 @@
 
 #include <stdint.h>
 
-namespace llvm {
+namespace wpi_llvm {
   class raw_ostream;
 
   /// Twine - A lightweight data structure for efficiently representing the

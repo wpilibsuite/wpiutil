@@ -31,7 +31,7 @@ class NetworkStream {
                          int timeout = 0) = 0;
   virtual void close() = 0;
 
-  virtual llvm::StringRef getPeerIP() const = 0;
+  virtual wpi_llvm::StringRef getPeerIP() const = 0;
   virtual int getPeerPort() const = 0;
   virtual void setNoDelay() = 0;
 

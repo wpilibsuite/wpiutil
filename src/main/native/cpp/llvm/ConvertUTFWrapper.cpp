@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 
-namespace llvm {
+namespace wpi_llvm {
 
 bool ConvertCodePointToUTF8(unsigned Source, char *&ResultPtr) {
   const UTF32 *SourceStart = &Source;
@@ -118,5 +118,5 @@ bool convertUTF8ToUTF16String(StringRef SrcUTF8,
   return true;
 }
 
-} // end namespace llvm
+} // end namespace wpi_llvm
 

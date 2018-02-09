@@ -18,7 +18,7 @@
 #include <cstdint>
 #include <iterator>
 
-namespace llvm {
+namespace wpi_llvm {
 template<typename T> class SmallVectorImpl;
 
 /// hexdigit - Return the hexadecimal character for the

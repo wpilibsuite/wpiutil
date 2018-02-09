@@ -51,15 +51,15 @@ std::string GetHostname() {
   return name;
 }
 
-llvm::StringRef GetHostname(llvm::SmallVectorImpl<char>& name) {
+wpi_llvm::StringRef GetHostname(wpi_llvm::SmallVectorImpl<char>& name) {
   // Use a tmp array to not require the SmallVector to be too large.
   char tmpName[256];
   if (!GetHostnameImpl(tmpName, sizeof(tmpName))) {
-    return llvm::StringRef{};
+    return wpi_llvm::StringRef{};
   }
   name.clear();
   name.append(tmpName, tmpName + std::strlen(tmpName) + 1);
 
-  return llvm::StringRef{name.data(), name.size(), true};
+  return wpi_llvm::StringRef{name.data(), name.size(), true};
 }
 }  // namespace wpi

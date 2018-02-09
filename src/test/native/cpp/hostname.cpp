@@ -14,7 +14,7 @@
 namespace wpi {
 TEST(HostNameTest, HostNameNotEmpty) { ASSERT_NE(wpi::GetHostname(), ""); }
 TEST(HostNameTest, HostNameNotEmptySmallVector) {
-  llvm::SmallVector<char, 256> name;
+  wpi_llvm::SmallVector<char, 256> name;
   ASSERT_NE(wpi::GetHostname(name), "");
 }
 }  // namespace wpi

@@ -183,7 +183,7 @@ unsigned getNumBytesForUTF8(UTF8 firstByte);
 #include "llvm/ArrayRef.h"
 #include "llvm/StringRef.h"
 
-namespace llvm {
+namespace wpi_llvm {
 
 /**
  * Convert an Unicode code point to UTF8 sequence.
@@ -246,7 +246,7 @@ bool convertUTF16ToUTF8String(ArrayRef<UTF16> SrcUTF16,
 bool convertUTF8ToUTF16String(StringRef SrcUTF8,
                               SmallVectorImpl<UTF16> &DstUTF16);
 
-} /* end namespace llvm */
+} /* end namespace wpi_llvm */
 
 #endif
 

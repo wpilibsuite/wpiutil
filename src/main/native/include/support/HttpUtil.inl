@@ -13,7 +13,7 @@ namespace wpi {
 template <typename T>
 HttpRequest::HttpRequest(const HttpLocation& loc, const T& extraParams)
     : host{loc.host}, port{loc.port} {
-  llvm::StringMap<llvm::StringRef> params;
+  wpi_llvm::StringMap<wpi_llvm::StringRef> params;
   for (const auto& p : loc.params)
     params.insert(std::make_pair(GetFirst(p), GetSecond(p)));
   for (const auto& p : extraParams)
@@ -23,9 +23,9 @@ HttpRequest::HttpRequest(const HttpLocation& loc, const T& extraParams)
 }
 
 template <typename T>
-void HttpRequest::SetPath(llvm::StringRef path_, const T& params) {
+void HttpRequest::SetPath(wpi_llvm::StringRef path_, const T& params) {
   // Build location including query string
-  llvm::raw_svector_ostream pathOs{path};
+  wpi_llvm::raw_svector_ostream pathOs{path};
   pathOs << path_;
   bool first = true;
   for (const auto& param : params) {
@@ -35,7 +35,7 @@ void HttpRequest::SetPath(llvm::StringRef path_, const T& params) {
     } else {
       pathOs << '&';
     }
-    llvm::SmallString<64> escapeBuf;
+    wpi_llvm::SmallString<64> escapeBuf;
     pathOs << EscapeURI(GetFirst(param), escapeBuf);
     if (!GetSecond(param).empty()) {
       pathOs << '=' << EscapeURI(GetSecond(param), escapeBuf);

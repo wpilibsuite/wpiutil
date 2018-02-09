@@ -17,7 +17,7 @@
 #include "llvm/raw_ostream.h"
 #include <iosfwd>
 
-namespace llvm {
+namespace wpi_llvm {
 
 /// raw_os_ostream - A raw_ostream that writes to an std::ostream.  This is a
 /// simple adaptor class.  It does not check for output errors; clients should

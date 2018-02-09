@@ -30,7 +30,7 @@
 #include <new>
 #include <utility>
 
-namespace llvm {
+namespace wpi_llvm {
 
 namespace detail {
 // We extend a pair to allow users to override the bucket type with their own
@@ -1115,6 +1115,6 @@ capacity_in_bytes(const DenseMap<KeyT, ValueT, KeyInfoT> &X) {
   return X.getMemorySize();
 }
 
-} // end namespace llvm
+} // end namespace wpi_llvm
 
 #endif

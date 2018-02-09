@@ -13,7 +13,7 @@
 
 #include "llvm/raw_os_ostream.h"
 #include <ostream>
-using namespace llvm;
+using namespace wpi_llvm;
 
 //===----------------------------------------------------------------------===//
 //  raw_os_ostream

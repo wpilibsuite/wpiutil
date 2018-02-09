@@ -20,7 +20,7 @@
 #include <cstdint>
 #include <system_error>
 
-namespace llvm {
+namespace wpi_llvm {
 class format_object_base;
 class FormattedString;
 class FormattedNumber;
@@ -179,7 +179,7 @@ public:
     return write(Str.data(), Str.length());
   }
 
-  raw_ostream &operator<<(const llvm::SmallVectorImpl<char> &Str) {
+  raw_ostream &operator<<(const wpi_llvm::SmallVectorImpl<char> &Str) {
     return write(Str.data(), Str.size());
   }
 

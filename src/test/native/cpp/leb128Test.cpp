@@ -29,8 +29,8 @@ namespace wpi {
 TEST(LEB128Test, WriteUleb128) {
 #define EXPECT_ULEB128_EQ(EXPECTED, VALUE, PAD)               \
   do {                                                        \
-    llvm::StringRef expected(EXPECTED, sizeof(EXPECTED) - 1); \
-    llvm::SmallString<32> buf;                                \
+    wpi_llvm::StringRef expected(EXPECTED, sizeof(EXPECTED) - 1); \
+    wpi_llvm::SmallString<32> buf;                                \
     size_t size = WriteUleb128(buf, VALUE);                   \
     EXPECT_EQ(size, buf.size());                              \
     EXPECT_EQ(expected, buf.str());                           \

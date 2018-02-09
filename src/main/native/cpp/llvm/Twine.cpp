@@ -10,7 +10,7 @@
 #include "llvm/Twine.h"
 #include "llvm/SmallString.h"
 #include "llvm/raw_ostream.h"
-using namespace llvm;
+using namespace wpi_llvm;
 
 std::string Twine::str() const {
   // If we're storing only a std::string, just return it.

@@ -16,7 +16,7 @@
 #include "llvm/StringExtras.h"
 #include "llvm/Compiler.h"
 #include <cassert>
-using namespace llvm;
+using namespace wpi_llvm;
 
 /// Returns the number of buckets to allocate to ensure that the DenseMap can
 /// accommodate \p NumEntries without need to grow().

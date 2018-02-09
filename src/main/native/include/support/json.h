@@ -476,7 +476,7 @@ template<>
 struct external_constructor<value_t::string>
 {
     template<typename BasicJsonType>
-    static void construct(BasicJsonType& j, llvm::StringRef s)
+    static void construct(BasicJsonType& j, wpi_llvm::StringRef s)
     {
         j.m_type = value_t::string;
         j.m_value = s;
@@ -532,7 +532,7 @@ struct external_constructor<value_t::array>
     }
 
     template<typename BasicJsonType, typename T>
-    static void construct(BasicJsonType& j, llvm::ArrayRef<T> arr)
+    static void construct(BasicJsonType& j, wpi_llvm::ArrayRef<T> arr)
     {
         using std::begin;
         using std::end;
@@ -636,7 +636,7 @@ template<class RealType, class CompatibleObjectType>
 struct is_compatible_object_type_impl<true, RealType, CompatibleObjectType>
 {
     static constexpr auto value =
-        std::is_constructible<llvm::StringRef,
+        std::is_constructible<wpi_llvm::StringRef,
         typename CompatibleObjectType::key_type>::value &&
         std::is_constructible<typename RealType::mapped_type,
         typename CompatibleObjectType::mapped_type>::value;
@@ -666,7 +666,7 @@ struct is_compatible_array_type
     static auto constexpr value =
         conjunction<negation<std::is_same<void, CompatibleArrayType>>,
         negation<is_compatible_object_type<BasicJsonType, CompatibleArrayType>>,
-        negation<std::is_constructible<llvm::StringRef, CompatibleArrayType>>,
+        negation<std::is_constructible<wpi_llvm::StringRef, CompatibleArrayType>>,
         negation<is_json_nested_type<BasicJsonType, CompatibleArrayType>>,
         has_value_type<CompatibleArrayType>,
         has_iterator<CompatibleArrayType>>::value;
@@ -712,7 +712,7 @@ void to_json(BasicJsonType& j, T b) noexcept
 }
 
 template<typename BasicJsonType, typename CompatibleString,
-         enable_if_t<std::is_constructible<llvm::StringRef,
+         enable_if_t<std::is_constructible<wpi_llvm::StringRef,
                      CompatibleString>::value, int> = 0>
 inline
 void to_json(BasicJsonType& j, const CompatibleString& s)
@@ -766,7 +766,7 @@ void to_json(BasicJsonType& j, const std::vector<bool>& e)
 
 template<typename BasicJsonType, typename T>
 inline
-void to_json(BasicJsonType& j, llvm::ArrayRef<T> arr)
+void to_json(BasicJsonType& j, wpi_llvm::ArrayRef<T> arr)
 {
     external_constructor<value_t::array>::construct(j, arr);
 }
@@ -795,7 +795,7 @@ void to_json(BasicJsonType& j, const  CompatibleObjectType& arr)
 
 template <typename BasicJsonType, typename T, std::size_t N,
           enable_if_t<!std::is_constructible<
-                          llvm::StringRef, T (&)[N]>::value,
+                          wpi_llvm::StringRef, T (&)[N]>::value,
                       int> = 0>
 inline
 void to_json(BasicJsonType& j, T (&arr)[N])
@@ -804,7 +804,7 @@ void to_json(BasicJsonType& j, T (&arr)[N])
 }
 
 template <typename BasicJsonType, typename CompatibleString, typename T,
-          enable_if_t<std::is_constructible<llvm::StringRef,
+          enable_if_t<std::is_constructible<wpi_llvm::StringRef,
                       CompatibleString>::value, int> = 0>
 inline
 void to_json(BasicJsonType& j, std::pair<CompatibleString, T> const& p)
@@ -1048,7 +1048,7 @@ void from_json(const BasicJsonType& j, ArithmeticType& val)
 }
 
 template <typename BasicJsonType, typename CompatibleString, typename T,
-          enable_if_t<std::is_constructible<llvm::StringRef,
+          enable_if_t<std::is_constructible<wpi_llvm::StringRef,
                       CompatibleString>::value, int> = 0>
 void from_json(const BasicJsonType& j, std::pair<CompatibleString, T>& p)
 {
@@ -1363,7 +1363,7 @@ class json
     7159](http://rfc7159.net/rfc7159), because any order implements the
     specified "unordered" nature of JSON objects.
     */
-    using object_t = llvm::StringMap<json>;
+    using object_t = wpi_llvm::StringMap<json>;
 
     /*!
     @brief a type for an array
@@ -1754,7 +1754,7 @@ class json
         json_value(value_t t);
 
         /// constructor for strings
-        json_value(llvm::StringRef value);
+        json_value(wpi_llvm::StringRef value);
         json_value(const std::string& value);
 
         /// constructor for objects
@@ -2477,7 +2477,7 @@ class json
 
     @since version 1.0.0; indentaction character added in version 3.0.0
     */
-    void dump(llvm::raw_ostream& os, int indent = -1) const;
+    void dump(wpi_llvm::raw_ostream& os, int indent = -1) const;
 
     /*!
     @brief return the type of the JSON value (explicit)
@@ -3354,7 +3354,7 @@ class json
 
     @complexity Logarithmic in the size of the container.
 
-    @sa @ref operator[](llvm::StringRef) for unchecked
+    @sa @ref operator[](wpi_llvm::StringRef) for unchecked
     access by reference
     @sa @ref value() for access by value with a default value
 
@@ -3364,7 +3364,7 @@ class json
     written using `at()`. It also demonstrates the different exceptions that
     can be thrown.,at__object_t_key_type}
     */
-    reference at(llvm::StringRef key);
+    reference at(wpi_llvm::StringRef key);
 
     /*!
     @brief access specified object element with bounds checking
@@ -3386,7 +3386,7 @@ class json
 
     @complexity Logarithmic in the size of the container.
 
-    @sa @ref operator[](llvm::StringRef) for unchecked
+    @sa @ref operator[](wpi_llvm::StringRef) for unchecked
     access by reference
     @sa @ref value() for access by value with a default value
 
@@ -3396,7 +3396,7 @@ class json
     `at()`. It also demonstrates the different exceptions that can be thrown.,
     at__object_t_key_type_const}
     */
-    const_reference at(llvm::StringRef key) const;
+    const_reference at(wpi_llvm::StringRef key) const;
 
     /*!
     @brief access specified array element
@@ -3467,13 +3467,13 @@ class json
     @liveexample{The example below shows how object elements can be read and
     written using the `[]` operator.,operatorarray__key_type}
 
-    @sa @ref at(llvm::StringRef) for access by reference
+    @sa @ref at(wpi_llvm::StringRef) for access by reference
     with range checking
     @sa @ref value() for access by value with a default value
 
     @since version 1.0.0
     */
-    reference operator[](llvm::StringRef key);
+    reference operator[](wpi_llvm::StringRef key);
 
     /*!
     @brief read-only access specified object element
@@ -3499,13 +3499,13 @@ class json
     @liveexample{The example below shows how object elements can be read using
     the `[]` operator.,operatorarray__key_type_const}
 
-    @sa @ref at(llvm::StringRef) for access by reference
+    @sa @ref at(wpi_llvm::StringRef) for access by reference
     with range checking
     @sa @ref value() for access by value with a default value
 
     @since version 1.0.0
     */
-    const_reference operator[](llvm::StringRef key) const;
+    const_reference operator[](wpi_llvm::StringRef key) const;
 
     /*!
     @brief access specified object element
@@ -3605,7 +3605,7 @@ class json
     template<typename T>
     reference operator[](T* key)
     {
-        return this->operator[](llvm::StringRef(key));
+        return this->operator[](wpi_llvm::StringRef(key));
     }
 
     /*!
@@ -3641,7 +3641,7 @@ class json
     template<typename T>
     const_reference operator[](T* key) const
     {
-        return this->operator[](llvm::StringRef(key));
+        return this->operator[](wpi_llvm::StringRef(key));
     }
 
     /*!
@@ -3659,10 +3659,10 @@ class json
     }
     @endcode
 
-    @note Unlike @ref at(llvm::StringRef), this function
+    @note Unlike @ref at(wpi_llvm::StringRef), this function
     does not throw if the given key @a key was not found.
 
-    @note Unlike @ref operator[](llvm::StringRef key), this
+    @note Unlike @ref operator[](wpi_llvm::StringRef key), this
     function does not implicitly add an element to the position defined by @a
     key. This function is furthermore also applicable to const objects.
 
@@ -3685,16 +3685,16 @@ class json
     @liveexample{The example below shows how object elements can be queried
     with a default value.,json__value}
 
-    @sa @ref at(llvm::StringRef) for access by reference
+    @sa @ref at(wpi_llvm::StringRef) for access by reference
     with range checking
-    @sa @ref operator[](llvm::StringRef) for unchecked
+    @sa @ref operator[](wpi_llvm::StringRef) for unchecked
     access by reference
 
     @since version 1.0.0
     */
     template<class ValueType, typename std::enable_if<
                  std::is_convertible<json, ValueType>::value, int>::type = 0>
-    ValueType value(llvm::StringRef key, ValueType default_value) const
+    ValueType value(wpi_llvm::StringRef key, ValueType default_value) const
     {
         // at only works for objects
         if (is_object())
@@ -3716,9 +3716,9 @@ class json
 
     /*!
     @brief overload for a default value of type const char*
-    @copydoc json::value(llvm::StringRef, ValueType) const
+    @copydoc json::value(wpi_llvm::StringRef, ValueType) const
     */
-    std::string value(llvm::StringRef key, const char* default_value) const
+    std::string value(wpi_llvm::StringRef key, const char* default_value) const
     {
         return value(key, std::string(default_value));
     }
@@ -3907,7 +3907,7 @@ class json
 
     @sa @ref erase(IteratorType, IteratorType) -- removes the elements in
     the given range
-    @sa @ref erase(llvm::StringRef) -- removes the element
+    @sa @ref erase(wpi_llvm::StringRef) -- removes the element
     from an object at the given key
     @sa @ref erase(const size_type) -- removes the element from an array at
     the given index
@@ -4010,7 +4010,7 @@ class json
     types.,erase__IteratorType_IteratorType}
 
     @sa @ref erase(IteratorType) -- removes the element at a given position
-    @sa @ref erase(llvm::StringRef) -- removes the element
+    @sa @ref erase(wpi_llvm::StringRef) -- removes the element
     from an object at the given key
     @sa @ref erase(const size_type) -- removes the element from an array at
     the given index
@@ -4098,7 +4098,7 @@ class json
 
     @since version 1.0.0
     */
-    size_type erase(llvm::StringRef key);
+    size_type erase(wpi_llvm::StringRef key);
 
     /*!
     @brief remove element from a JSON array given an index
@@ -4119,7 +4119,7 @@ class json
     @sa @ref erase(IteratorType) -- removes the element at a given position
     @sa @ref erase(IteratorType, IteratorType) -- removes the elements in
     the given range
-    @sa @ref erase(llvm::StringRef) -- removes the element
+    @sa @ref erase(wpi_llvm::StringRef) -- removes the element
     from an object at the given key
 
     @since version 1.0.0
@@ -4158,13 +4158,13 @@ class json
 
     @since version 1.0.0
     */
-    iterator find(llvm::StringRef key);
+    iterator find(wpi_llvm::StringRef key);
 
     /*!
     @brief find an element in a JSON object
-    @copydoc find(llvm::StringRef)
+    @copydoc find(wpi_llvm::StringRef)
     */
-    const_iterator find(llvm::StringRef key) const;
+    const_iterator find(wpi_llvm::StringRef key) const;
 
     /*!
     @brief returns the number of occurrences of a key in a JSON object
@@ -4187,7 +4187,7 @@ class json
 
     @since version 1.0.0
     */
-    size_type count(llvm::StringRef key) const
+    size_type count(wpi_llvm::StringRef key) const
     {
         // return 0 for all nonobject types
         return is_object() ? m_value.object->count(key) : 0;
@@ -4605,13 +4605,13 @@ class json
 
     @since version 1.0.0
     */
-    void push_back(const std::pair<llvm::StringRef, json>& val);
+    void push_back(const std::pair<wpi_llvm::StringRef, json>& val);
 
     /*!
     @brief add an object to an object
     @copydoc push_back(const typename object_t::value_type&)
     */
-    reference operator+=(const std::pair<llvm::StringRef, json>& val)
+    reference operator+=(const std::pair<wpi_llvm::StringRef, json>& val)
     {
         push_back(val);
         return *this;
@@ -4724,7 +4724,7 @@ class json
     @since version 2.0.8
     */
     template<class... Args>
-    std::pair<iterator, bool> emplace(llvm::StringRef key, Args&& ... args)
+    std::pair<iterator, bool> emplace(wpi_llvm::StringRef key, Args&& ... args)
     {
         // emplace only works for null objects or arrays
         if (!(is_null() || is_object()))
@@ -5342,7 +5342,7 @@ class json
 
     @since version 1.0.0; indentaction character added in version 3.0.0
     */
-    friend llvm::raw_ostream& operator<<(llvm::raw_ostream& o, const json& j);
+    friend wpi_llvm::raw_ostream& operator<<(wpi_llvm::raw_ostream& o, const json& j);
 
     /// @}
 
@@ -5385,7 +5385,7 @@ class json
 
     @since version 1.0.0 (originally for std::string)
     */
-    static json parse(llvm::StringRef s,
+    static json parse(wpi_llvm::StringRef s,
                             const parser_callback_t cb = nullptr);
 
     /*!
@@ -5571,7 +5571,7 @@ class json
             return lhs.m_it - rhs.m_it;
         }
 
-        friend llvm::raw_ostream& operator<<(llvm::raw_ostream& os, primitive_iterator_t it)
+        friend wpi_llvm::raw_ostream& operator<<(wpi_llvm::raw_ostream& os, primitive_iterator_t it)
         {
             return os << it.m_it;
         }
@@ -6327,7 +6327,7 @@ class json
         @brief  return the key of an object iterator
         @pre The iterator is initialized; i.e. `m_object != nullptr`.
         */
-        llvm::StringRef key() const
+        wpi_llvm::StringRef key() const
         {
             assert(m_object != nullptr);
 
@@ -6445,8 +6445,8 @@ class json
 
     @since version 2.0.9
     */
-    static void to_cbor(llvm::raw_ostream& os, const json& j);
-    static llvm::StringRef to_cbor(const json& j, llvm::SmallVectorImpl<char> buf);
+    static void to_cbor(wpi_llvm::raw_ostream& os, const json& j);
+    static wpi_llvm::StringRef to_cbor(const json& j, wpi_llvm::SmallVectorImpl<char> buf);
     static std::string to_cbor(const json& j);
 
     /*!
@@ -6523,8 +6523,8 @@ class json
 
     @since version 2.0.9
     */
-    static void to_msgpack(llvm::raw_ostream& os, const json& j);
-    static llvm::StringRef to_msgpack(const json& j, llvm::SmallVectorImpl<char> buf);
+    static void to_msgpack(wpi_llvm::raw_ostream& os, const json& j);
+    static wpi_llvm::StringRef to_msgpack(const json& j, wpi_llvm::SmallVectorImpl<char> buf);
     static std::string to_msgpack(const json& j);
 
     /*!
@@ -6614,7 +6614,7 @@ class json
     @since version 2.0.9, parameter @a start_index since 2.1.1
     */
     static json from_cbor(wpi::raw_istream& is);
-    static json from_cbor(llvm::StringRef s);
+    static json from_cbor(wpi_llvm::StringRef s);
 
     /*!
     @brief create a JSON value from a byte vector in MessagePack format
@@ -6683,7 +6683,7 @@ class json
     @since version 2.0.9, parameter @a start_index since 2.1.1
     */
     static json from_msgpack(wpi::raw_istream& is);
-    static json from_msgpack(llvm::StringRef s);
+    static json from_msgpack(wpi_llvm::StringRef s);
 
     /// @}
 
@@ -6937,7 +6937,7 @@ class json
 
     Uses a JSON pointer to retrieve a reference to the respective JSON value.
     No bound checking is performed. Similar to @ref operator[](
-    llvm::StringRef), `null` values are created in arrays and objects if
+    wpi_llvm::StringRef), `null` values are created in arrays and objects if
     necessary.
 
     In particular:
@@ -7214,7 +7214,7 @@ if no parse error occurred.
 */
 inline wpi::json operator "" _json(const char* s, std::size_t n)
 {
-    return wpi::json::parse(llvm::StringRef(s, n));
+    return wpi::json::parse(wpi_llvm::StringRef(s, n));
 }
 
 /*!

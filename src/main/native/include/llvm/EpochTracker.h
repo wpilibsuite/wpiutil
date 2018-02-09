@@ -18,7 +18,7 @@
 
 #include <cstdint>
 
-namespace llvm {
+namespace wpi_llvm {
 
 #ifdef NDEBUG //ifndef LLVM_ENABLE_ABI_BREAKING_CHECKS
 
@@ -92,6 +92,6 @@ public:
 
 #endif // LLVM_ENABLE_ABI_BREAKING_CHECKS
 
-} // namespace llvm
+} // namespace wpi_llvm
 
 #endif

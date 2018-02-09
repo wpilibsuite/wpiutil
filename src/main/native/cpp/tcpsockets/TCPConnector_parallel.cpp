@@ -27,7 +27,7 @@ using namespace wpi;
 #endif
 
 std::unique_ptr<NetworkStream> TCPConnector::connect_parallel(
-    llvm::ArrayRef<std::pair<const char*, int>> servers, Logger& logger,
+    wpi_llvm::ArrayRef<std::pair<const char*, int>> servers, Logger& logger,
     int timeout) {
   if (servers.empty()) return nullptr;
 
@@ -35,9 +35,9 @@ std::unique_ptr<NetworkStream> TCPConnector::connect_parallel(
   struct GlobalState {
     wpi::mutex mtx;
 #ifdef HAVE_THREAD_LOCAL
-    llvm::SmallSet<std::pair<std::string, int>, 16> active;
+    wpi_llvm::SmallSet<std::pair<std::string, int>, 16> active;
 #else
-    llvm::SmallSet<std::tuple<std::thread::id, std::string, int>, 16> active;
+    wpi_llvm::SmallSet<std::tuple<std::thread::id, std::string, int>, 16> active;
 #endif
   };
 #ifdef HAVE_THREAD_LOCAL
