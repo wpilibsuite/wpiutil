@@ -17,7 +17,7 @@
 #include "llvm/SmallVector.h"
 #include "llvm/StringRef.h"
 
-namespace llvm {
+namespace wpi {
 
 /// SmallString - A SmallString is just a SmallVector with methods and accessors
 /// that make it work better as a string (e.g. operator+ etc).
@@ -293,5 +293,9 @@ public:
 };
 
 }
+
+#ifndef WPI_DISABLE_LLVM_SHIM
+namespace llvm = wpi;
+#endif
 
 #endif

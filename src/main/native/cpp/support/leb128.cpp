@@ -39,7 +39,7 @@ uint64_t SizeUleb128(uint64_t val) {
  * encodings refer to section "7.6 - Variable Length Data". Return
  * the number of bytes written.
  */
-uint64_t WriteUleb128(llvm::SmallVectorImpl<char>& dest, uint64_t val) {
+uint64_t WriteUleb128(SmallVectorImpl<char>& dest, uint64_t val) {
   size_t count = 0;
 
   do {

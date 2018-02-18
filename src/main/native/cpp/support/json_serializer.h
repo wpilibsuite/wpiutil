@@ -53,7 +53,7 @@ class json::serializer
     @param[in] s  output stream to serialize to
     @param[in] ichar  indentation character to use
     */
-    explicit serializer(llvm::raw_ostream& s)
+    explicit serializer(raw_ostream& s)
         : o(s), loc(std::localeconv()),
           thousands_sep(!loc->thousands_sep ? '\0' : loc->thousands_sep[0]),
           decimal_point(!loc->decimal_point ? '\0' : loc->decimal_point[0])
@@ -93,7 +93,7 @@ class json::serializer
 
     @complexity Linear in the length of string @a s.
     */
-    void dump_escaped(llvm::StringRef s) const;
+    void dump_escaped(StringRef s) const;
 
     /*!
     @brief dump a floating-point number
@@ -107,7 +107,7 @@ class json::serializer
 
   private:
     /// the output of the serializer
-    llvm::raw_ostream& o;
+    raw_ostream& o;
 
     /// the locale
     const std::lconv* loc = nullptr;

@@ -17,7 +17,7 @@
 
 #include <stdint.h>
 
-namespace llvm {
+namespace wpi {
   class raw_ostream;
 
   /// Twine - A lightweight data structure for efficiently representing the
@@ -540,5 +540,9 @@ namespace llvm {
 
   /// @}
 }
+
+#ifndef WPI_DISABLE_LLVM_SHIM
+namespace llvm = wpi;
+#endif
 
 #endif

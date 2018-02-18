@@ -18,7 +18,7 @@
 #include <cstdint>
 #include <iterator>
 
-namespace llvm {
+namespace wpi {
 template<typename T> class SmallVectorImpl;
 
 /// hexdigit - Return the hexadecimal character for the
@@ -192,6 +192,10 @@ inline std::string join(IteratorT Begin, IteratorT End, StringRef Separator) {
   return join_impl(Begin, End, Separator, tag());
 }
 
-} // End llvm namespace
+} // End wpi namespace
+
+#ifndef WPI_DISABLE_LLVM_SHIM
+namespace llvm = wpi;
+#endif
 
 #endif

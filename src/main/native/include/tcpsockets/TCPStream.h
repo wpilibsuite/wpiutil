@@ -50,7 +50,7 @@ class TCPStream : public NetworkStream {
                  int timeout = 0) override;
   void close() override;
 
-  llvm::StringRef getPeerIP() const override;
+  StringRef getPeerIP() const override;
   int getPeerPort() const override;
   void setNoDelay() override;
   bool setBlocking(bool enabled) override;

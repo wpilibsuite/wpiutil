@@ -17,7 +17,7 @@
 #include "llvm/raw_ostream.h"
 #include <iosfwd>
 
-namespace llvm {
+namespace wpi {
 
 /// raw_os_ostream - A raw_ostream that writes to an std::ostream.  This is a
 /// simple adaptor class.  It does not check for output errors; clients should
@@ -37,6 +37,10 @@ public:
   ~raw_os_ostream() override;
 };
 
-} // end llvm namespace
+} // end wpi namespace
+
+#ifndef WPI_DISABLE_LLVM_SHIM
+namespace llvm = wpi;
+#endif
 
 #endif

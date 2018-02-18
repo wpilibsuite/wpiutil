@@ -141,7 +141,7 @@ json::json_value::json_value(value_t t)
     }
 }
 
-json::json_value::json_value(llvm::StringRef value)
+json::json_value::json_value(StringRef value)
 {
     string = create<std::string>(value);
 }
@@ -727,7 +727,7 @@ void json::push_back(const json& val)
     m_value.array->push_back(val);
 }
 
-void json::push_back(const std::pair<llvm::StringRef, json>& val)
+void json::push_back(const std::pair<StringRef, json>& val)
 {
     // push_back only works for null objects or objects
     if (!(is_null() || is_object()))
@@ -752,7 +752,7 @@ void json::push_back(std::initializer_list<json> init)
     if (is_object() && init.size() == 2 && init.begin()->is_string())
     {
         const std::string key = *init.begin();
-        push_back(std::pair<llvm::StringRef, json>(key, *(init.begin() + 1)));
+        push_back(std::pair<StringRef, json>(key, *(init.begin() + 1)));
     }
     else
     {
@@ -802,7 +802,7 @@ json::const_reference json::at(size_type idx) const
     }
 }
 
-json::reference json::at(llvm::StringRef key)
+json::reference json::at(StringRef key)
 {
     // at only works for objects
     if (is_object())
@@ -820,7 +820,7 @@ json::reference json::at(llvm::StringRef key)
     }
 }
 
-json::const_reference json::at(llvm::StringRef key) const
+json::const_reference json::at(StringRef key) const
 {
     // at only works for objects
     if (is_object())
@@ -877,7 +877,7 @@ json::const_reference json::operator[](size_type idx) const
     JSON_THROW(type_error::create(305, "cannot use operator[] with " + type_name()));
 }
 
-json::reference json::operator[](llvm::StringRef key)
+json::reference json::operator[](StringRef key)
 {
     // implicitly convert null value to an empty object
     if (is_null())
@@ -896,7 +896,7 @@ json::reference json::operator[](llvm::StringRef key)
     JSON_THROW(type_error::create(305, "cannot use operator[] with " + type_name()));
 }
 
-json::const_reference json::operator[](llvm::StringRef key) const
+json::const_reference json::operator[](StringRef key) const
 {
     // const operator[] only works for objects
     if (is_object())
@@ -960,7 +960,7 @@ json::const_reference json::back() const
     }
 }
 
-json::size_type json::erase(llvm::StringRef key)
+json::size_type json::erase(StringRef key)
 {
     // this erase only works for objects
     if (is_object())
@@ -989,7 +989,7 @@ void json::erase(const size_type idx)
     }
 }
 
-json::iterator json::find(llvm::StringRef key)
+json::iterator json::find(StringRef key)
 {
     auto result = end();
 
@@ -1001,7 +1001,7 @@ json::iterator json::find(llvm::StringRef key)
     return result;
 }
 
-json::const_iterator json::find(llvm::StringRef key) const
+json::const_iterator json::find(StringRef key) const
 {
     auto result = cend();
 
@@ -1173,8 +1173,8 @@ std::size_t hash<wpi::json>::operator()(const wpi::json& j) const
 {
     // a naive hashing via the string representation
     const auto& h = hash<std::string>();
-    llvm::SmallVector<char, 128> buf;
-    llvm::raw_svector_ostream os(buf);
+    SmallVector<char, 128> buf;
+    raw_svector_ostream os(buf);
     j.dump(os);
     return h(os.str());
 }

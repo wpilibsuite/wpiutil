@@ -25,7 +25,7 @@
 #include <iterator>
 #include <utility>
 
-namespace llvm {
+namespace wpi {
 
 class SmallPtrSetIteratorImpl;
 
@@ -395,10 +395,14 @@ public:
 };
 }
 
+#ifndef WPI_DISABLE_LLVM_SHIM
+namespace llvm = wpi;
+#endif
+
 namespace std {
   /// Implement std::swap in terms of SmallPtrSet swap.
   template<class T, unsigned N>
-  inline void swap(llvm::SmallPtrSet<T, N> &LHS, llvm::SmallPtrSet<T, N> &RHS) {
+  inline void swap(wpi::SmallPtrSet<T, N> &LHS, wpi::SmallPtrSet<T, N> &RHS) {
     LHS.swap(RHS);
   }
 }

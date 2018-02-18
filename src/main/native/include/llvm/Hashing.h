@@ -53,7 +53,7 @@
 #include <string>
 #include <utility>
 
-namespace llvm {
+namespace wpi {
 
 /// \brief An opaque object representing a hash code.
 ///
@@ -64,8 +64,8 @@ namespace llvm {
 ///
 /// In order to obtain the hash_code for an object 'x':
 /// \code
-///   using llvm::hash_value;
-///   llvm::hash_code code = hash_value(x);
+///   using wpi::hash_value;
+///   wpi::hash_code code = hash_value(x);
 /// \endcode
 class hash_code {
   size_t value;
@@ -311,7 +311,7 @@ struct hash_state {
 
 /// \brief A global, fixed seed-override variable.
 ///
-/// This variable can be set using the \see llvm::set_fixed_execution_seed
+/// This variable can be set using the \see wpi::set_fixed_execution_seed
 /// function. See that function for details. Do not, under any circumstances,
 /// set or read this variable.
 extern size_t fixed_seed_override;
@@ -370,7 +370,7 @@ get_hashable_data(const T &value) {
 template <typename T>
 typename std::enable_if<!is_hashable_data<T>::value, size_t>::type
 get_hashable_data(const T &value) {
-  using ::llvm::hash_value;
+  using ::wpi::hash_value;
   return hash_value(value);
 }
 
@@ -476,7 +476,7 @@ hash_combine_range_impl(ValueT *first, ValueT *last) {
 /// a sequence of bytes.
 template <typename InputIteratorT>
 hash_code hash_combine_range(InputIteratorT first, InputIteratorT last) {
-  return ::llvm::hashing::detail::hash_combine_range_impl(first, last);
+  return ::wpi::hashing::detail::hash_combine_range_impl(first, last);
 }
 
 
@@ -599,7 +599,7 @@ public:
 /// *not* call this routine, they should instead call 'hash_value'.
 template <typename ...Ts> hash_code hash_combine(const Ts &...args) {
   // Recursively hash each argument using a helper class.
-  ::llvm::hashing::detail::hash_combine_recursive_helper helper;
+  ::wpi::hashing::detail::hash_combine_recursive_helper helper;
   return helper.combine(0, helper.buffer, helper.buffer + 64, args...);
 }
 
@@ -629,14 +629,14 @@ inline hash_code hash_integer_value(uint64_t value) {
 template <typename T>
 typename std::enable_if<is_integral_or_enum<T>::value, hash_code>::type
 hash_value(T value) {
-  return ::llvm::hashing::detail::hash_integer_value(
+  return ::wpi::hashing::detail::hash_integer_value(
       static_cast<uint64_t>(value));
 }
 
 // Declared and documented above, but defined here so that any of the hashing
 // infrastructure is available.
 template <typename T> hash_code hash_value(const T *ptr) {
-  return ::llvm::hashing::detail::hash_integer_value(
+  return ::wpi::hashing::detail::hash_integer_value(
     reinterpret_cast<uintptr_t>(ptr));
 }
 
@@ -654,6 +654,10 @@ hash_code hash_value(const std::basic_string<T> &arg) {
   return hash_combine_range(arg.begin(), arg.end());
 }
 
-} // namespace llvm
+} // namespace wpi
+
+#ifndef WPI_DISABLE_LLVM_SHIM
+namespace llvm = wpi;
+#endif
 
 #endif

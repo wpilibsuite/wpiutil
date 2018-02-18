@@ -22,7 +22,7 @@
 #include <utility>
 #include <iterator>
 
-namespace llvm {
+namespace wpi {
 
 /// \brief A range adaptor for a pair of iterators.
 ///
@@ -64,5 +64,9 @@ iterator_range<decltype(begin(std::declval<T>()))> drop_begin(T &&t, int n) {
   return make_range(std::next(begin(t), n), end(t));
 }
 }
+
+#ifndef WPI_DISABLE_LLVM_SHIM
+namespace llvm = wpi;
+#endif
 
 #endif

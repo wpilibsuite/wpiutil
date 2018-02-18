@@ -19,7 +19,7 @@
 
 #include "llvm/Compiler.h"
 
-namespace llvm {
+namespace wpi {
 
 /// isPodLike - This is a type trait that is used to determine whether a given
 /// type can be copied around with memcpy instead of running ctors etc.
@@ -90,6 +90,10 @@ struct add_const_past_pointer<
   typedef const typename std::remove_pointer<T>::type *type;
 };
 
-} // namespace llvm
+} // namespace wpi
+
+#ifndef WPI_DISABLE_LLVM_SHIM
+namespace llvm = wpi;
+#endif
 
 #endif

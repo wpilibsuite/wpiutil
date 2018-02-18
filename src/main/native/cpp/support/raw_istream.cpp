@@ -34,21 +34,20 @@
 
 using namespace wpi;
 
-llvm::StringRef raw_istream::getline(llvm::SmallVectorImpl<char>& buf,
-                                     int maxLen) {
+StringRef raw_istream::getline(SmallVectorImpl<char>& buf, int maxLen) {
   buf.clear();
   for (int i = 0; i < maxLen; ++i) {
     char c;
     read(c);
-    if (has_error()) return llvm::StringRef{buf.data(), buf.size()};
+    if (has_error()) return StringRef{buf.data(), buf.size()};
     if (c == '\r') continue;
     buf.push_back(c);
     if (c == '\n') break;
   }
-  return llvm::StringRef{buf.data(), buf.size()};
+  return StringRef{buf.data(), buf.size()};
 }
 
-raw_mem_istream::raw_mem_istream(llvm::StringRef mem)
+raw_mem_istream::raw_mem_istream(StringRef mem)
     : raw_mem_istream(mem.data(), mem.size()) {}
 
 void raw_mem_istream::close() {}
@@ -65,7 +64,7 @@ void raw_mem_istream::read_impl(void* data, size_t len) {
   m_left -= len;
 }
 
-static int getFD(const llvm::Twine& Filename, std::error_code& EC) {
+static int getFD(const Twine& Filename, std::error_code& EC) {
   // Handle "-" as stdin. Note that when we do this, we consider ourself
   // the owner of stdin. This means that we can do things like close the
   // file descriptor when we're done and set the "binary" flag globally.
@@ -76,14 +75,14 @@ static int getFD(const llvm::Twine& Filename, std::error_code& EC) {
 
   int FD;
 
-  EC = llvm::sys::fs::openFileForRead(Filename, FD);
+  EC = sys::fs::openFileForRead(Filename, FD);
   if (EC) return -1;
 
   EC = std::error_code();
   return FD;
 }
 
-raw_fd_istream::raw_fd_istream(const llvm::Twine& filename, std::error_code& ec,
+raw_fd_istream::raw_fd_istream(const Twine& filename, std::error_code& ec,
                                size_t bufSize)
     : raw_fd_istream(getFD(filename, ec), true, bufSize) {}
 
