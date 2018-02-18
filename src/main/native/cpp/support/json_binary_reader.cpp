@@ -627,9 +627,9 @@ json binary_reader::parse_cbor(bool get_char)
         default: // anything else (0xFF is handled inside the other types)
         {
             std::string s;
-            llvm::raw_string_ostream ss(s);
+            raw_string_ostream ss(s);
             ss << "error reading CBOR; last byte: ";
-            ss << llvm::format_hex(current, 2);
+            ss << format_hex(current, 2);
             JSON_THROW(json::parse_error::create(112, chars_read, ss.str()));
         }
     }
@@ -709,9 +709,9 @@ std::string binary_reader::get_cbor_string()
         default:
         {
             std::string s;
-            llvm::raw_string_ostream ss(s);
+            raw_string_ostream ss(s);
             ss << "expected a CBOR string; last byte: ";
-            ss << llvm::format_hex(current, 2);
+            ss << format_hex(current, 2);
             JSON_THROW(json::parse_error::create(113, chars_read, ss.str()));
         }
     }
@@ -1113,9 +1113,9 @@ json binary_reader::parse_msgpack()
         default: // anything else
         {
             std::string s;
-            llvm::raw_string_ostream ss(s);
+            raw_string_ostream ss(s);
             ss << "error reading MessagePack; last byte: ";
-            ss << llvm::format_hex(current, 2);
+            ss << format_hex(current, 2);
             JSON_THROW(json::parse_error::create(112, chars_read, ss.str()));
         }
     }
@@ -1186,9 +1186,9 @@ std::string binary_reader::get_msgpack_string()
         default:
         {
             std::string s;
-            llvm::raw_string_ostream ss(s);
+            raw_string_ostream ss(s);
             ss << "expected a MessagePack string; last byte: ";
-            ss << llvm::format_hex(current, 2);
+            ss << format_hex(current, 2);
             JSON_THROW(json::parse_error::create(113, chars_read, ss.str()));
         }
     }
@@ -1212,7 +1212,7 @@ json json::from_cbor(wpi::raw_istream& is)
     return br.parse_cbor();
 }
 
-json json::from_cbor(llvm::StringRef s)
+json json::from_cbor(StringRef s)
 {
     wpi::raw_mem_istream is(s.data(), s.size());
     binary_reader br(is);
@@ -1225,7 +1225,7 @@ json json::from_msgpack(wpi::raw_istream& is)
     return br.parse_msgpack();
 }
 
-json json::from_msgpack(llvm::StringRef s)
+json json::from_msgpack(StringRef s)
 {
     wpi::raw_mem_istream is(s.data(), s.size());
     binary_reader br(is);

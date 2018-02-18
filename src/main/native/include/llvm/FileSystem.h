@@ -7,7 +7,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// This file declares the llvm::sys::fs namespace. It is designed after
+// This file declares the wpi::sys::fs namespace. It is designed after
 // TR2/boost filesystem (v3), but modified to remove exception handling and the
 // path class.
 //
@@ -39,7 +39,7 @@
 #include <tuple>
 #include <vector>
 
-namespace llvm {
+namespace wpi {
 namespace sys {
 namespace fs {
 
@@ -663,6 +663,10 @@ public:
 
 } // end namespace fs
 } // end namespace sys
-} // end namespace llvm
+} // end namespace wpi
+
+#ifndef WPI_DISABLE_LLVM_SHIM
+namespace llvm = wpi;
+#endif
 
 #endif // LLVM_SUPPORT_FILESYSTEM_H

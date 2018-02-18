@@ -22,7 +22,7 @@
 #include <cstring>
 #include <utility>
 
-namespace llvm {
+namespace wpi {
   template<typename ValueT>
   class StringMapConstIterator;
   template<typename ValueT>
@@ -558,6 +558,10 @@ inline bool operator>=(const StringMap<ValueTy>& lhs,
   return !(lhs < rhs);
 }
 
-} // namespace llvm
+} // namespace wpi
+
+#ifndef WPI_DISABLE_LLVM_SHIM
+namespace llvm = wpi;
+#endif
 
 #endif

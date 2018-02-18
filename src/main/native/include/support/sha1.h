@@ -26,23 +26,19 @@
 
 #include "llvm/StringRef.h"
 
-namespace llvm {
+namespace wpi {
 template <typename T>
 class SmallVectorImpl;
-}  // namespace llvm
-
-namespace wpi {
-
 class raw_istream;
 
 class SHA1 {
  public:
   SHA1();
-  void Update(llvm::StringRef s);
+  void Update(StringRef s);
   void Update(raw_istream& is);
   std::string Final();
-  llvm::StringRef Final(llvm::SmallVectorImpl<char>& buf);
-  static std::string FromFile(llvm::StringRef filename);
+  StringRef Final(SmallVectorImpl<char>& buf);
+  static std::string FromFile(StringRef filename);
 
  private:
   uint32_t digest[5];

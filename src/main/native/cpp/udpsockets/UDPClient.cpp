@@ -25,7 +25,7 @@ using namespace wpi;
 
 UDPClient::UDPClient(Logger& logger) : UDPClient("", logger) {}
 
-UDPClient::UDPClient(llvm::StringRef address, Logger& logger)
+UDPClient::UDPClient(StringRef address, Logger& logger)
     : m_lsd(0), m_address(address), m_logger(logger) {}
 
 UDPClient::UDPClient(UDPClient&& other)
@@ -72,7 +72,7 @@ int UDPClient::start() {
   addr.sin_family = AF_INET;
   if (m_address.size() > 0) {
 #ifdef _WIN32
-    llvm::SmallString<128> addr_copy(m_address);
+    SmallString<128> addr_copy(m_address);
     addr_copy.push_back('\0');
     int res = InetPton(PF_INET, addr_copy.data(), &(addr.sin_addr));
 #else
@@ -109,14 +109,13 @@ void UDPClient::shutdown() {
   }
 }
 
-int UDPClient::send(llvm::ArrayRef<uint8_t> data, llvm::StringRef server,
-                    int port) {
+int UDPClient::send(ArrayRef<uint8_t> data, StringRef server, int port) {
   // server must be a resolvable IP address
   struct sockaddr_in addr;
   std::memset(&addr, 0, sizeof(addr));
   addr.sin_family = AF_INET;
   if (server.size() > 0) {
-    llvm::SmallVector<char, 128> addr_store;
+    SmallVector<char, 128> addr_store;
     auto remoteAddr = server.c_str(addr_store);
 #ifdef _WIN32
     int res = InetPton(AF_INET, remoteAddr, &(addr.sin_addr));
@@ -140,13 +139,13 @@ int UDPClient::send(llvm::ArrayRef<uint8_t> data, llvm::StringRef server,
   return result;
 }
 
-int UDPClient::send(llvm::StringRef data, llvm::StringRef server, int port) {
+int UDPClient::send(StringRef data, StringRef server, int port) {
   // server must be a resolvable IP address
   struct sockaddr_in addr;
   std::memset(&addr, 0, sizeof(addr));
   addr.sin_family = AF_INET;
   if (server.size() > 0) {
-    llvm::SmallVector<char, 128> addr_store;
+    SmallVector<char, 128> addr_store;
     auto remoteAddr = server.c_str(addr_store);
 #ifdef _WIN32
     int res = InetPton(AF_INET, remoteAddr, &(addr.sin_addr));

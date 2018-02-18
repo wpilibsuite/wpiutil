@@ -25,7 +25,7 @@ class UDPClient {
 
  public:
   explicit UDPClient(Logger& logger);
-  UDPClient(llvm::StringRef address, Logger& logger);
+  UDPClient(StringRef address, Logger& logger);
   UDPClient(const UDPClient& other) = delete;
   UDPClient(UDPClient&& other);
   ~UDPClient();
@@ -36,8 +36,8 @@ class UDPClient {
   int start();
   void shutdown();
   // The passed in address MUST be a resolved IP address.
-  int send(llvm::ArrayRef<uint8_t> data, llvm::StringRef server, int port);
-  int send(llvm::StringRef data, llvm::StringRef server, int port);
+  int send(ArrayRef<uint8_t> data, StringRef server, int port);
+  int send(StringRef data, StringRef server, int port);
 };
 
 }  // namespace wpi

@@ -28,7 +28,7 @@
 #include <iterator>
 #include <memory>
 
-namespace llvm {
+namespace wpi {
 
 /// This is all the non-templated stuff common to all SmallVectors.
 class SmallVectorBase {
@@ -70,7 +70,7 @@ private:
   // Allocate raw space for N elements of type T.  If T has a ctor or dtor, we
   // don't want it to be automatically run, so we need to represent the space as
   // something else.  Use an array of char of sufficient alignment.
-  typedef llvm::AlignedCharArrayUnion<T> U;
+  typedef wpi::AlignedCharArrayUnion<T> U;
   U FirstEl;
   // Space after 'FirstEl' is clobbered, do not add any instance vars after it.
 
@@ -849,7 +849,7 @@ public:
   }
 
   template <typename RangeTy>
-  explicit SmallVector(const llvm::iterator_range<RangeTy> R)
+  explicit SmallVector(const wpi::iterator_range<RangeTy> R)
       : SmallVectorImpl<T>(N) {
     this->append(R.begin(), R.end());
   }
@@ -899,20 +899,24 @@ static inline size_t capacity_in_bytes(const SmallVector<T, N> &X) {
   return X.capacity_in_bytes();
 }
 
-} // End llvm namespace
+} // End wpi namespace
+
+#ifndef WPI_DISABLE_LLVM_SHIM
+namespace llvm = wpi;
+#endif
 
 namespace std {
   /// Implement std::swap in terms of SmallVector swap.
   template<typename T>
   inline void
-  swap(llvm::SmallVectorImpl<T> &LHS, llvm::SmallVectorImpl<T> &RHS) {
+  swap(wpi::SmallVectorImpl<T> &LHS, wpi::SmallVectorImpl<T> &RHS) {
     LHS.swap(RHS);
   }
 
   /// Implement std::swap in terms of SmallVector swap.
   template<typename T, unsigned N>
   inline void
-  swap(llvm::SmallVector<T, N> &LHS, llvm::SmallVector<T, N> &RHS) {
+  swap(wpi::SmallVector<T, N> &LHS, wpi::SmallVector<T, N> &RHS) {
     LHS.swap(RHS);
   }
 }

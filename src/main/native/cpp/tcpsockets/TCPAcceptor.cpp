@@ -85,7 +85,7 @@ int TCPAcceptor::start() {
   address.sin_family = PF_INET;
   if (m_address.size() > 0) {
 #ifdef _WIN32
-    llvm::SmallString<128> addr_copy(m_address);
+    SmallString<128> addr_copy(m_address);
     addr_copy.push_back('\0');
     int res = InetPton(PF_INET, addr_copy.data(), &(address.sin_addr));
 #else
@@ -139,7 +139,7 @@ void TCPAcceptor::shutdown() {
 
   std::memset(&address, 0, sizeof(address));
   address.sin_family = PF_INET;
-  llvm::SmallString<128> addr_copy;
+  SmallString<128> addr_copy;
   if (m_address.size() > 0)
     addr_copy = m_address;
   else

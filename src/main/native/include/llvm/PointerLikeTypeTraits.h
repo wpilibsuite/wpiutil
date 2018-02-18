@@ -18,7 +18,7 @@
 #include "llvm/AlignOf.h"
 #include <cstdint>
 
-namespace llvm {
+namespace wpi {
 
 /// A traits type that is used to handle pointer types and things that are just
 /// wrappers for pointers as a uniform entity.
@@ -89,6 +89,10 @@ public:
   enum { NumLowBitsAvailable = 0 };
 };
 
-} // end namespace llvm
+} // end namespace wpi
+
+#ifndef WPI_DISABLE_LLVM_SHIM
+namespace llvm = wpi;
+#endif
 
 #endif

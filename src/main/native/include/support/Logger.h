@@ -60,8 +60,8 @@ class Logger {
   do {                                                                 \
     ::wpi::Logger& WPI_logger_ = logger_inst;                          \
     if (WPI_logger_.min_level() <= level && WPI_logger_.HasLogger()) { \
-      llvm::SmallString<128> log_buf_;                                 \
-      llvm::raw_svector_ostream log_os_{log_buf_};                     \
+      SmallString<128> log_buf_;                                       \
+      raw_svector_ostream log_os_{log_buf_};                           \
       log_os_ << x;                                                    \
       WPI_logger_.Log(level, __FILE__, __LINE__, log_buf_.c_str());    \
     }                                                                  \

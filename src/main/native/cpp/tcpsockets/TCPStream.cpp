@@ -162,7 +162,7 @@ void TCPStream::close() {
   m_sd = -1;
 }
 
-llvm::StringRef TCPStream::getPeerIP() const { return m_peerIP; }
+StringRef TCPStream::getPeerIP() const { return m_peerIP; }
 
 int TCPStream::getPeerPort() const { return m_peerPort; }
 

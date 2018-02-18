@@ -30,7 +30,7 @@
 #include <cstdio>
 #include <tuple>
 
-namespace llvm {
+namespace wpi {
 
 /// This is a helper class used for handling formatted output.  It is the
 /// abstract base class of a templated derived class.
@@ -197,6 +197,10 @@ inline FormattedNumber format_decimal(int64_t N, unsigned Width) {
   return FormattedNumber(0, N, Width, false, false, false);
 }
 
-} // end namespace llvm
+} // end namespace wpi
+
+#ifndef WPI_DISABLE_LLVM_SHIM
+namespace llvm = wpi;
+#endif
 
 #endif

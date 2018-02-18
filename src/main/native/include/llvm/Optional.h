@@ -23,7 +23,7 @@
 #include <new>
 #include <utility>
 
-namespace llvm {
+namespace wpi {
 
 template<typename T>
 class Optional {
@@ -223,6 +223,10 @@ void operator>=(const Optional<T> &X, const Optional<U> &Y);
 template<typename T, typename U>
 void operator>(const Optional<T> &X, const Optional<U> &Y);
 
-} // end llvm namespace
+} // end wpi namespace
+
+#ifndef WPI_DISABLE_LLVM_SHIM
+namespace llvm = wpi;
+#endif
 
 #endif

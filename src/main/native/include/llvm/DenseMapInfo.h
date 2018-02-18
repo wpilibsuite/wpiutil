@@ -20,7 +20,7 @@
 #include "llvm/PointerLikeTypeTraits.h"
 #include "llvm/type_traits.h"
 
-namespace llvm {
+namespace wpi {
 
 template<typename T>
 struct DenseMapInfo {
@@ -246,6 +246,10 @@ template <typename T> struct DenseMapInfo<ArrayRef<T>> {
   }
 };
 
-} // end namespace llvm
+} // end namespace wpi
+
+#ifndef WPI_DISABLE_LLVM_SHIM
+namespace llvm = wpi;
+#endif
 
 #endif

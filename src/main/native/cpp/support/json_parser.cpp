@@ -259,7 +259,7 @@ class lexer
     }
 
     /// return string value
-    llvm::StringRef get_string()
+    StringRef get_string()
     {
         return yytext.str();
     }
@@ -303,10 +303,10 @@ class lexer
     size_t chars_read = 0;
 
     /// buffer for raw byte sequence of the current token
-    llvm::SmallString<128> token_string;
+    SmallString<128> token_string;
 
     /// buffer for variable-length tokens (numbers, strings)
-    llvm::SmallString<128> yytext;
+    SmallString<128> yytext;
 
     /// a description of occurred lexer errors
     std::string error_message = "";
@@ -616,8 +616,8 @@ int lexer::get_codepoint()
 std::string lexer::codepoint_to_string(int codepoint)
 {
     std::string s;
-    llvm::raw_string_ostream ss(s);
-    ss << "U+" << llvm::format_hex_no_prefix(codepoint, 4, true);
+    raw_string_ostream ss(s);
+    ss << "U+" << format_hex_no_prefix(codepoint, 4, true);
     return ss.str();
 }
 
@@ -2073,7 +2073,7 @@ void json::parser::unexpect(lexer::token_type t) const
     }
 }
 
-json json::parse(llvm::StringRef s, const parser_callback_t cb)
+json json::parse(StringRef s, const parser_callback_t cb)
 {
     wpi::raw_mem_istream is(s.data(), s.size());
     return parser(is, cb).parse(true);

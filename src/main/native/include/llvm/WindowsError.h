@@ -12,8 +12,12 @@
 
 #include <system_error>
 
-namespace llvm {
+namespace wpi {
 std::error_code mapWindowsError(unsigned EV);
 }
+
+#ifndef WPI_DISABLE_LLVM_SHIM
+namespace llvm = wpi;
+#endif
 
 #endif

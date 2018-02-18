@@ -20,7 +20,7 @@
 #include <cstdint>
 #include <system_error>
 
-namespace llvm {
+namespace wpi {
 class format_object_base;
 class FormattedString;
 class FormattedNumber;
@@ -179,7 +179,7 @@ public:
     return write(Str.data(), Str.length());
   }
 
-  raw_ostream &operator<<(const llvm::SmallVectorImpl<char> &Str) {
+  raw_ostream &operator<<(const wpi::SmallVectorImpl<char> &Str) {
     return write(Str.data(), Str.size());
   }
 
@@ -510,6 +510,10 @@ public:
   ~buffer_ostream() override { OS << str(); }
 };
 
-} // end llvm namespace
+} // end wpi namespace
+
+#ifndef WPI_DISABLE_LLVM_SHIM
+namespace llvm = wpi;
+#endif
 
 #endif // LLVM_SUPPORT_RAW_OSTREAM_H

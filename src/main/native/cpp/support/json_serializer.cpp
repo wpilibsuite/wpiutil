@@ -221,7 +221,7 @@ void json::serializer::dump(const json& val,
     }
 }
 
-void json::serializer::dump_escaped(llvm::StringRef s) const
+void json::serializer::dump_escaped(StringRef s) const
 {
     for (const auto& c : s)
     {
@@ -307,8 +307,8 @@ void json::serializer::dump_escaped(llvm::StringRef s) const
             {
                 // print character c as \uxxxx
                 o << "\\u00";
-                o << llvm::hexdigit((c >> 4) & 0xf, true);
-                o << llvm::hexdigit((c >> 0) & 0xf, true);
+                o << hexdigit((c >> 4) & 0xf, true);
+                o << hexdigit((c >> 0) & 0xf, true);
                 break;
             }
 
@@ -349,7 +349,7 @@ void json::serializer::dump_float(double x)
     static constexpr auto d = std::numeric_limits<double>::digits10;
 
     // the actual conversion
-    llvm::SmallString<64> number_buffer;
+    SmallString<64> number_buffer;
     number_buffer.resize(64);
     std::ptrdiff_t len = snprintf(number_buffer.data(), number_buffer.size(),
                                   "%.*g", d, x);
@@ -401,7 +401,7 @@ void json::serializer::dump_float(double x)
 
 namespace wpi {
 
-llvm::raw_ostream& operator<<(llvm::raw_ostream& o, const json& j)
+raw_ostream& operator<<(raw_ostream& o, const json& j)
 {
     j.dump(o, 0);
     return o;
@@ -412,13 +412,13 @@ llvm::raw_ostream& operator<<(llvm::raw_ostream& o, const json& j)
 std::string json::dump(int indent) const
 {
     std::string s;
-    llvm::raw_string_ostream os(s);
+    raw_string_ostream os(s);
     dump(os, indent);
     os.flush();
     return s;
 }
 
-void json::dump(llvm::raw_ostream& os, int indent) const
+void json::dump(raw_ostream& os, int indent) const
 {
     serializer s(os);
 

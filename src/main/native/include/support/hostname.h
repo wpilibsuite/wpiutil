@@ -12,14 +12,12 @@
 
 #include "llvm/StringRef.h"
 
-namespace llvm {
+namespace wpi {
 template <typename T>
 class SmallVectorImpl;
-}  // namespace llvm
 
-namespace wpi {
 std::string GetHostname();
-llvm::StringRef GetHostname(llvm::SmallVectorImpl<char>& name);
+StringRef GetHostname(SmallVectorImpl<char>& name);
 }  // namespace wpi
 
 #endif  // WPIUTIL_SUPPORT_HOSTNAME_H_
